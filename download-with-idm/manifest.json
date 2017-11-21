@@ -1,0 +1,47 @@
+{
+  "name": "Download with Internet Download Manager (IDM)",
+  "description": "when activated, interrupts the built-in download manager to direct links to IDM",
+  "version": "0.1.7",
+  "manifest_version": 2,
+  "permissions": [
+    "storage",
+    "tabs",
+    "nativeMessaging",
+    "notifications",
+    "downloads",
+    "contextMenus",
+    "https://api.github.com/repos/belaviyo/native-client/releases/latest"
+  ],
+  "background": {
+    "persistent": false,
+    "scripts": [
+      "config.js",
+      "termlib_parser.js",
+      "common.js"
+    ]
+  },
+  "browser_action": {
+    "default_icon": {
+      "16": "data/icons/disabled/16.png",
+      "32": "data/icons/disabled/32.png",
+      "64": "data/icons/disabled/64.png"
+    }
+  },
+  "icons": {
+     "16": "data/icons/16.png",
+     "32": "data/icons/32.png",
+     "64": "data/icons/64.png",
+     "128": "data/icons/128.png",
+     "256": "data/icons/256.png"
+  },
+  "homepage_url": "http://add0n.com/dowlnoad-with.html?from=idm",
+  "options_ui": {
+    "page": "data/options/index.html",
+    "chrome_style": true
+  },
+  "applications": {
+    "gecko": {
+      "id": "{d1646fcf-76ad-49c5-b8b2-e496e9b71189}"
+    }
+  }
+}
