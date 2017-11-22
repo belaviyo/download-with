@@ -145,18 +145,24 @@ function sendTo(d, tab = {}) {
 
 var id;
 function observe(d, response = () => {}) {
-  response();
-  const url = d.finalUrl || d.url;
-  if (url.startsWith('http') || url.startsWith('ftp')) {
-    if (d.url.indexOf('github.com/belaviyo/native-client') !== -1) {
+  chrome.storage.local.get({
+    mimes: ['application/pdf']
+  }, prefs => {
+    if (prefs.mimes.indexOf(d.mime) !== -1) {
       return false;
     }
-    if (id === d.id || d.error) {
-      return false;
+    response();
+    const url = d.finalUrl || d.url;
+    if (url.startsWith('http') || url.startsWith('ftp')) {
+      if (d.url.indexOf('github.com/belaviyo/native-client') !== -1) {
+        return false;
+      }
+      if (id === d.id || d.error) {
+        return false;
+      }
+      chrome.downloads.pause(d.id, () => sendTo(d));
     }
-    chrome.downloads.pause(d.id, () => sendTo(d));
-  }
-  return false;
+  });
 }
 
 function changeState(enabled) {
