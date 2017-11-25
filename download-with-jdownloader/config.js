@@ -6,7 +6,7 @@ var config = {};
 config.tag = 'jdownloader';
 config.name = 'Download with JDownloader';
 
-config.delay = 10000;
+config.delay = 5000;
 
 config.cookies = true;
 
@@ -38,33 +38,37 @@ config.command = {
 config.post = {
   url: 'http://127.0.0.1:9666/flashgot',
   method: 'POST',
-  action: (d, tab) => {
-    return (d.referrer ? tools.cookies(d.referrer) : Promise.resolve(''))
-    .then(cookies => {
-      return tools.fetch(Object.assign(config.post, {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        data: {
-          urls: d.finalUrl || d.url,
-          referer: d.referrer || '',
-          autostart: 1,
-          package: tab.title || '',
-          description: 'Initiated by ' + config.name,
-          cookies,
-          fnames: (d.filename || '').split(/[/\\]/).pop()
-        }
-      })).then(r => {
-        if (r.status !== 200) {
-          throw new Error(r.statusText);
-        }
-      }).catch(() => {
-        throw new Error(
-          'Cannot send command to JDownloader; Make sure ' +
-          config.post.url +
-          ' is accessible'
-        );
-      });
+  action: (d, tab) => (d.referrer ? tools.cookies(d.referrer) : Promise.resolve('')).then(cookies => {
+    let index = 0;
+    const delay = t => new Promise(resolve => window.setTimeout(resolve, t));
+    const once = () => tools.fetch(Object.assign(config.post, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      data: {
+        urls: d.finalUrl || d.url,
+        referer: d.referrer || '',
+        autostart: 1,
+        package: tab.title || '',
+        description: 'Initiated by ' + config.name,
+        cookies,
+        fnames: (d.filename || '').split(/[/\\]/).pop()
+      }
+    })).then(r => {
+      if (r.status !== 200) {
+        throw new Error('Connection is rejected by JDownloader');
+      }
+    }).catch(e => {
+      index += 1;
+      if (index < 11 && e.message !== 'Connection is rejected by JDownloader') {
+        return delay(config.delay).then(once);
+      }
+      throw new Error(
+        'Cannot send command to JDownloader; Make sure ' +
+        config.post.url +
+        ' is accessible'
+      );
     });
-  }
+    return once();
+  })
 };
