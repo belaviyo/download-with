@@ -52,7 +52,7 @@ config.post = {
           package: tab.title || '',
           description: 'Initiated by ' + config.name,
           cookies,
-          fnames: d.filename || ''
+          fnames: (d.filename || '').split(/[/\\]/).pop()
         }
       })).then(r => {
         if (r.status !== 200) {

@@ -35,7 +35,6 @@ function notify(message) {
     message: message.message || message
   });
 }
-
 function execute(d) {
   return new Promise((resolve, reject) => {
     chrome.storage.local.get(config.command.guess, prefs => {
@@ -57,7 +56,7 @@ function execute(d) {
             .replace(/\[URL\]/g, d.finalUrl || d.url)
             .replace(/\[REFERRER\]/g, d.referrer)
             .replace(/\[USERAGENT\]/g, navigator.userAgent)
-            .replace(/\[FILENAME\]/g, d.filename)
+            .replace(/\[FILENAME\]/g, (d.filename || '').split(/[/\\]/).pop())
             .replace(/\\/g, '\\\\')
         };
         p.parseLine(termref);
@@ -230,15 +229,16 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 // FAQs & Feedback
 chrome.storage.local.get({
   'version': null,
-  'faqs': false
+  'faqs': navigator.userAgent.indexOf('Firefox') === -1
 }, prefs => {
   const version = chrome.runtime.getManifest().version;
-
   if (prefs.version ? (prefs.faqs && prefs.version !== version) : true) {
+    const p = Boolean(prefs.version);
     chrome.storage.local.set({version}, () => {
       chrome.tabs.create({
         url: 'http://add0n.com/download-with.html?from=' + config.tag + '&version=' + version +
-          '&type=' + (prefs.version ? ('upgrade&p=' + prefs.version) : 'install')
+          '&type=' + (p ? ('upgrade&p=' + prefs.version) : 'install'),
+        active: p === false
       });
     });
   }
