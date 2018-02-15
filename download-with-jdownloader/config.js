@@ -52,7 +52,8 @@ config.post = {
         package: tab.title || '',
         description: 'Initiated by ' + config.name,
         cookies,
-        fnames: (d.filename || '').split(/[/\\]/).pop()
+        fnames: (d.filename || '').split(/[/\\]/).pop(),
+        source: chrome.runtime.getURL('')
       }
     })).then(r => {
       if (r.status !== 200) {
@@ -60,7 +61,7 @@ config.post = {
       }
     }).catch(e => {
       index += 1;
-      if (index < 11 && e.message !== 'Connection is rejected by JDownloader') {
+      if (index < 20 && e.message !== 'Connection is rejected by JDownloader') {
         return delay(config.delay).then(once);
       }
       throw new Error(

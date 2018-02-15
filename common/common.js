@@ -181,9 +181,7 @@ function changeState(enabled) {
     }
   });
   chrome.browserAction.setTitle({
-    title: `${config.name}
-
-Integration is "${enabled ? 'enabled' : 'disabled'}"`
+    title: `${config.name} (Integration is "${enabled ? 'enabled' : 'disabled'}")`
   });
 }
 
@@ -236,7 +234,7 @@ chrome.storage.local.get({
     const p = Boolean(prefs.version);
     chrome.storage.local.set({version}, () => {
       chrome.tabs.create({
-        url: 'http://add0n.com/download-with.html?from=' + config.tag + '&version=' + version +
+        url: chrome.runtime.getManifest().homepage_url + '&version=' + version +
           '&type=' + (p ? ('upgrade&p=' + prefs.version) : 'install'),
         active: p === false
       });

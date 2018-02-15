@@ -1,7 +1,7 @@
 {
-  "name": "Download with JDownloader",
-  "description": "when activated, interrupts the built-in download manager to direct links to JDownloader",
-  "version": "0.1.5",
+  "name": "Download with FlashGet",
+  "description": "when activated, interrupts the built-in download manager to direct links to FlashGet",
+  "version": "0.1.0",
   "manifest_version": 2,
   "permissions": [
     "storage",
@@ -10,8 +10,7 @@
     "notifications",
     "downloads",
     "contextMenus",
-    "cookies",
-    "<all_urls>"
+    "https://api.github.com/repos/belaviyo/native-client/releases/latest"
   ],
   "background": {
     "persistent": false,
@@ -32,18 +31,11 @@
      "16": "data/icons/16.png",
      "32": "data/icons/32.png",
      "64": "data/icons/64.png",
-     "128": "data/icons/128.png",
-     "256": "data/icons/256.png"
+     "128": "data/icons/128.png"
   },
-  "homepage_url": "http://add0n.com/dowlnoad-with.html?from=jdownloader",
+  "homepage_url": "http://add0n.com/dowlnoad-with.html?from=flashget",
   "options_ui": {
     "page": "data/options/index.html",
     "chrome_style": true
-  },
-  "applications": {
-    "gecko": {
-      "id": "{03e07985-30b0-4ae0-8b3e-0c7519b9bdf6}",
-      "strict_min_version": "52.0"
-    }
   }
 }
