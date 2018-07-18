@@ -150,6 +150,15 @@ function observe(d, response = () => {}) {
   response();
   const url = d.finalUrl || d.url;
   if (url.startsWith('http') || url.startsWith('ftp')) {
+    // prefer d.url over d.finalUrl as it might be closer to the actual page url
+    const {hostname} = new URL(d.url || d.finalUrl);
+    const whitelist = localStorage.getItem('whitelist') || '';
+    if (whitelist) {
+      const hs = whitelist.split('|');
+      if (hs.some(s => !s.endsWith(hostname) && !hostname.endsWith(s))) {
+        return false;
+      }
+    }
     if (d.url.indexOf('github.com/belaviyo/native-client') !== -1) {
       return false;
     }

@@ -2,8 +2,11 @@
 'use strict';
 
 function restore() {
-  const mimes = localStorage.getItem('mimes').split('|');
+  const mimes = (localStorage.getItem('mimes') || '').split('|');
   document.getElementById('mimes').value = mimes.join(', ');
+
+  const whitelist = (localStorage.getItem('whitelist') || '').split('|');
+  document.getElementById('whitelist').value = whitelist.join(', ');
 
   chrome.storage.local.get(Object.assign(config.command.guess, {
     cookies: false
@@ -21,6 +24,9 @@ function save() {
   const mimes = document.getElementById('mimes').value
     .split(/\s*,\s*/).filter((s, i, l) => s && l.indexOf(s) === i && s.indexOf('/') !== -1);
   localStorage.setItem('mimes', mimes.join('|'));
+  const whitelist = document.getElementById('whitelist').value
+    .split(/\s*,\s*/).filter((s, i, l) => s && l.indexOf(s) === i);
+  localStorage.setItem('whitelist', whitelist.join('|'));
   chrome.storage.local.set({
     executable,
     args,

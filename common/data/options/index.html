@@ -6,6 +6,7 @@
   body {
     font-family: "Helvetica Neue",Helvetica,sans-serif;
     font-size: 13px;
+    min-width: 500px;
   }
   p {
     margin: 3px 0;
@@ -52,6 +53,12 @@
     </tr>
     <tr>
       <td colspan="2"><textarea style="width: 100%" rows="3" id="mimes"></textarea></td>
+    </tr>
+    <tr>
+      <td colspan="2">Comma-separated list of hostnames to interrupt the built-in download manager if the extension's interruption mode is enabled from the toolbar button. If the list is not empty, only downloading requests from these hostnames will be automatically interrupted and for all other hostnames, to send a job to the external download manager use the right-click context menu (on-demand mode). Note that the hostname belongs to the actual download URL, not the page URL.</td>
+    </tr>
+    <tr>
+      <td colspan="2"><textarea style="width: 100%" rows="3" id="whitelist" placeholder="e.g.: google.com, bing.com"></textarea></td>
     </tr>
   </table>
 
