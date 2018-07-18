@@ -156,7 +156,13 @@ function observe(d, response = () => {}) {
     if (id === d.id || d.error) {
       return false;
     }
-    chrome.downloads.pause(d.id, () => sendTo(d));
+
+    chrome.downloads.pause(d.id, () => chrome.tabs.query({
+      active: true,
+      currentWindow: true
+    }, tabs => {
+      sendTo(d, tabs && tabs.length ? tabs[0] : {});
+    }));
   }
 }
 
