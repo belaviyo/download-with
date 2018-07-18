@@ -39,7 +39,7 @@ function execute(d) {
   return new Promise((resolve, reject) => {
     chrome.storage.local.get(config.command.guess, prefs => {
       if (!prefs.executable) {
-        return notify('Use options page to define a command');
+        return notify('Command box is empty. Use options page to define one!');
       }
       const p = new Parser();
       tools.cookies(d.referrer).then(cookies => {
@@ -235,7 +235,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => sendTo({
   referrer: info.pageUrl
 }, tab));
 
-// one time
+// one time; we used to use chrme.storage for storing mime-types
 {
   const callback = () => chrome.storage.local.get({
     mimes: ['application/pdf'],
