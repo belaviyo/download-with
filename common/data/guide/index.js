@@ -9,11 +9,11 @@ else if (navigator.userAgent.indexOf('Linux') !== -1) {
 }
 document.body.dataset.os = (os === 'mac' || os === 'linux') ? 'linux' : 'windows';
 
-var notify = (function () {
+var notify = (() => {
   let parent = document.getElementById('notify');
   let elems = [];
   return {
-    show: function (type, msg, delay) {
+    show: (type, msg, delay) => {
       let elem = document.createElement('div');
       elem.textContent = msg;
       elem.dataset.type = type;
@@ -26,7 +26,7 @@ var notify = (function () {
       }, delay || 3000);
       elems.push(elem);
     },
-    destroy: function () {
+    destroy: () => {
       elems.forEach(elem => {
         try {
           parent.removeChild(elem);
@@ -36,6 +36,22 @@ var notify = (function () {
     }
   };
 })();
+
+var check = (silent = false, callback = () => {}) => chrome.runtime.sendNativeMessage('com.add0n.native_client', {
+  method: 'spec'
+}, response => {
+  callback(response);
+  if (silent) {
+    return;
+  }
+  console.error(response);
+  if (response) {
+    notify.show('success', 'Native client version is ' + response.version);
+  }
+  else {
+    notify.show('error', 'Cannot find the native client. Follow the 3 steps to install the native client');
+  }
+});
 
 document.addEventListener('click', e => {
   let target = e.target;
@@ -68,19 +84,15 @@ document.addEventListener('click', e => {
     req.send();
   }
   else if (target.dataset.cmd === 'check') {
-    chrome.runtime.sendNativeMessage('com.add0n.native_client', {
-      method: 'spec'
-    }, response => {
-      console.error(response)
-      if (response) {
-        notify.show('success', 'Native client version is ' + response.version);
-      }
-      else {
-        notify.show('error', 'Cannot find the native client. Follow the 3 steps to install the native client');
-      }
-    });
+    check();
   }
   else if (target.dataset.cmd === 'options') {
     chrome.runtime.openOptionsPage();
+  }
+});
+
+check(true, response => {
+  if (response && response.version) {
+    document.getElementById('followup').dataset.hidden = false;
   }
 });
