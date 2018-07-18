@@ -187,7 +187,9 @@ function changeState(enabled) {
   chrome.browserAction.setIcon({
     path: {
       '16': 'data/icons/' + (enabled ? '' : 'disabled/') + '16.png',
+      '19': 'data/icons/' + (enabled ? '' : 'disabled/') + '19.png',
       '32': 'data/icons/' + (enabled ? '' : 'disabled/') + '32.png',
+      '38': 'data/icons/' + (enabled ? '' : 'disabled/') + '38.png',
       '64': 'data/icons/' + (enabled ? '' : 'disabled/') + '64.png'
     }
   });
