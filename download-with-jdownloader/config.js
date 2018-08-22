@@ -19,12 +19,12 @@ config.command = {
   executable: {
     Mac: 'open',
     Win: '%LocalAppData%\\JDownloader v2.0\\JDownloader2.exe',
-    Lin: 'JDownloader2'
+    Lin: 'JDownloader2',
   },
   args: {
     Mac: '-a "JDownloader2"',
     Win: '',
-    Lin: ''
+    Lin: '',
   },
   get guess() {
     const key = navigator.platform.substr(0, 3);
