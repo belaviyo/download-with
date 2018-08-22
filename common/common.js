@@ -132,8 +132,10 @@ function sendTo(d, tab = {}) {
     .then(running => !running && execute(d)).then(() => config.post && config.post.action(d, tab))
     .then(() => {
       if (d.id) {
-        chrome.downloads.erase({
-          id: d.id
+        chrome.downloads.cancel(d.id, () => {
+          chrome.downloads.erase({
+            id: d.id
+          });
         });
       }
     })
@@ -142,37 +144,24 @@ function sendTo(d, tab = {}) {
 
 var id;
 function observe(d, response = () => {}) {
-  const mimes = localStorage.getItem('mimes') || '';
-  if (mimes.indexOf(d.mime) !== -1) {
-    return false;
-  }
-
-  response();
-  const url = d.finalUrl || d.url;
-  if (url.startsWith('http') || url.startsWith('ftp')) {
-    // prefer d.url over d.finalUrl as it might be closer to the actual page url
-    const {hostname} = new URL(d.url || d.finalUrl);
-    const whitelist = localStorage.getItem('whitelist') || '';
-    if (whitelist) {
-      const hs = whitelist.split('|');
-      if (hs.some(s => !s.endsWith(hostname) && !hostname.endsWith(s))) {
+  chrome.storage.local.get({
+    mimes: ['application/pdf']
+  }, prefs => {
+    if (prefs.mimes.indexOf(d.mime) !== -1) {
+      return false;
+    }
+    response();
+    const url = d.finalUrl || d.url;
+    if (url.startsWith('http') || url.startsWith('ftp')) {
+      if (d.url.indexOf('github.com/belaviyo/native-client') !== -1) {
         return false;
       }
+      if (id === d.id || d.error) {
+        return false;
+      }
+      chrome.downloads.pause(d.id, () => sendTo(d));
     }
-    if (d.url.indexOf('github.com/belaviyo/native-client') !== -1) {
-      return false;
-    }
-    if (id === d.id || d.error) {
-      return false;
-    }
-
-    chrome.downloads.pause(d.id, () => chrome.tabs.query({
-      active: true,
-      currentWindow: true
-    }, tabs => {
-      sendTo(d, tabs && tabs.length ? tabs[0] : {});
-    }));
-  }
+  });
 }
 
 function changeState(enabled) {
@@ -211,80 +200,48 @@ function onCommand(toggle = true) {
 chrome.browserAction.onClicked.addListener(onCommand);
 onCommand(false);
 
-// contextMenus
-{
-  const callback = () => {
-    chrome.contextMenus.create({
-      id: 'open-link',
-      title: config.name,
-      contexts: ['link'],
-      documentUrlPatterns: ['*://*/*']
-    });
-    chrome.contextMenus.create({
-      id: 'open-video',
-      title: config.name,
-      contexts: ['video', 'audio'],
-      documentUrlPatterns: ['*://*/*']
-    });
-  };
+(function(callback) {
   chrome.runtime.onInstalled.addListener(callback);
   chrome.runtime.onStartup.addListener(callback);
-}
-chrome.contextMenus.onClicked.addListener((info, tab) => sendTo({
-  finalUrl: info.menuItemId === 'open-video' ? info.srcUrl : info.linkUrl,
-  referrer: info.pageUrl
-}, tab));
-
-// one time
-{
-  const callback = () => chrome.storage.local.get({
-    mimes: ['application/pdf'],
-    ported: false
-  }, prefs => {
-    if (prefs.ported === false) {
-      if (prefs.mimes.length) {
-        localStorage.setItem('mimes', prefs.mimes.join('|'));
-        chrome.storage.local.remove('mimes');
-        chrome.storage.local.set({
-          ported: true
-        });
-      }
-    }
+})(function() {
+  chrome.contextMenus.create({
+    id: 'open-link',
+    title: config.name,
+    contexts: ['link'],
+    documentUrlPatterns: ['*://*/*']
   });
-  chrome.runtime.onInstalled.addListener(callback);
-}
+  chrome.contextMenus.create({
+    id: 'open-video',
+    title: config.name,
+    contexts: ['video', 'audio'],
+    documentUrlPatterns: ['*://*/*']
+  });
+});
+chrome.contextMenus.onClicked.addListener((info, tab) => {
+  sendTo({
+    finalUrl: info.menuItemId === 'open-video' ? info.srcUrl : info.linkUrl,
+    referrer: info.pageUrl
+  }, tab);
+});
 
 // FAQs & Feedback
 chrome.storage.local.get({
   'version': null,
-  'faqs': true,
-  'last-update': 0
+  'faqs': navigator.userAgent.indexOf('Firefox') === -1
 }, prefs => {
   const version = chrome.runtime.getManifest().version;
-
   if (prefs.version ? (prefs.faqs && prefs.version !== version) : true) {
-    const now = Date.now();
-    const doUpdate = (now - prefs['last-update']) / 1000 / 60 / 60 / 24 > 30;
-    chrome.storage.local.set({
-      version,
-      'last-update': doUpdate ? Date.now() : prefs['last-update']
-    }, () => {
-      // do not display the FAQs page if last-update occurred less than 30 days ago.
-      if (doUpdate) {
-        const p = Boolean(prefs.version);
-        chrome.tabs.create({
-          url: chrome.runtime.getManifest().homepage_url + '&version=' + version +
-            '&type=' + (p ? ('upgrade&p=' + prefs.version) : 'install'),
-          active: p === false
-        });
-      }
+    const p = Boolean(prefs.version);
+    chrome.storage.local.set({version}, () => {
+      chrome.tabs.create({
+        url: chrome.runtime.getManifest().homepage_url + '&version=' + version +
+          '&type=' + (p ? ('upgrade&p=' + prefs.version) : 'install'),
+        active: p === false
+      });
     });
   }
 });
-
 {
   const {name, version} = chrome.runtime.getManifest();
-  chrome.runtime.setUninstallURL(
-    chrome.runtime.getManifest().homepage_url + '&rd=feedback&name=' + name + '&version=' + version
-  );
+  chrome.runtime.setUninstallURL('http://add0n.com/feedback.html?name=' + name + '&version=' + version);
 }
