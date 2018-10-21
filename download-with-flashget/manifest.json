@@ -1,7 +1,7 @@
 {
   "name": "Download with FlashGet™",
   "description": "Optionally send your downloading jobs to the well-known FlashGet™ download manager",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "manifest_version": 2,
   "permissions": [
     "storage",
@@ -37,9 +37,15 @@
      "64": "data/icons/64.png",
      "128": "data/icons/128.png"
   },
-  "homepage_url": "http://add0n.com/dowlnoad-with.html?from=flashget",
+  "homepage_url": "http://add0n.com/download-with.html?from=flashget",
   "options_ui": {
     "page": "data/options/index.html",
     "chrome_style": true
+  },
+  "applications": {
+    "gecko": {
+      "id": "{48f5395d-5c00-41cd-9a5e-fd2f8d9b74c2}",
+      "strict_min_version": "59.0"
+    }
   }
 }

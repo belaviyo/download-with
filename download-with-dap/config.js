@@ -25,7 +25,7 @@ config.command = {
   executable: {
     Mac: 'open',
     Win: '%ProgramFiles(x86)%\\DAP\\DAP.exe',
-    Lin: 'DAP',
+    Lin: 'DAP'
   },
   args: {
     Mac: '-a "DAP"',

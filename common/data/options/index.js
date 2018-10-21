@@ -8,6 +8,8 @@ function restore() {
   const whitelist = (localStorage.getItem('whitelist') || '').split('|');
   document.getElementById('whitelist').value = whitelist.join(', ');
 
+  document.getElementById('autostart').checked = localStorage.getItem('autostart') === '0' ? false : true;
+
   chrome.storage.local.get(Object.assign(config.command.guess, {
     cookies: false
   }), prefs => {
@@ -27,6 +29,7 @@ function save() {
   const whitelist = document.getElementById('whitelist').value
     .split(/\s*,\s*/).filter((s, i, l) => s && l.indexOf(s) === i);
   localStorage.setItem('whitelist', whitelist.join('|'));
+  localStorage.setItem('autostart', document.getElementById('autostart').checked ? 1 : 0);
   chrome.storage.local.set({
     executable,
     args,
@@ -44,6 +47,9 @@ document.getElementById('save').addEventListener('click', save);
 
 if (!config.cookies) {
   [...document.querySelectorAll('[cookies]')].forEach(e => e.style = 'opacity: 0.5; pointer-events: none;');
+}
+if (!('autostart' in config)) {
+  [...document.querySelectorAll('[autostart]')].forEach(e => e.style = 'opacity: 0.5; pointer-events: none;');
 }
 
 document.getElementById('reset').addEventListener('click', e => {

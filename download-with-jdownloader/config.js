@@ -6,9 +6,19 @@ var config = {};
 config.tag = 'jdownloader';
 config.name = 'Download with JDownloader';
 
-config.delay = 5000;
 
 config.cookies = true;
+
+Object.defineProperty(config, 'delay', {
+  get() {
+    return Number(localStorage.getItem('delay') || 5) * 1000;
+  }
+});
+Object.defineProperty(config, 'autostart', {
+  get() {
+    return Number(localStorage.getItem('autostart') || 1);
+  }
+});
 
 config.pre = {
   url: 'http://127.0.0.1:9666/flash/',
@@ -48,7 +58,7 @@ config.post = {
       data: {
         urls: d.finalUrl || d.url,
         referer: d.referrer || '',
-        autostart: 1,
+        autostart: config.autostart,
         package: tab.title || '',
         description: 'Initiated by ' + config.name,
         cookies,

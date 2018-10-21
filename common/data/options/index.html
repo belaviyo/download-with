@@ -14,52 +14,64 @@
   table {
     width: 100%;
   }
+  hr {
+    border: none;
+    border-top: dashed 1px #ccc;
+    padding: 0;
+    margin: 10px 0;
+  }
   .note {
-    font-size: 80%;
+    font-size: 90%;
     font-color: #ccc;
   }
   </style>
   <table>
-    <tr>
-      <td>Executable:</td>
-      <td>
-        <input type="text" id="executable" style="width: 100%; margin-top: 5px;">
-      </td>
-    </tr>
-    <tr>
-      <td></td>
-      <td class="note">Path to the executable</td>
-    </tr>
-    <tr>
-      <td>Arguments:</td>
-      <td>
-        <input type="text" id="args" style="width: 100%; margin-top: 5px;">
-      </td>
-    </tr>
-    <tr>
-      <td></td>
-      <td class="note">Arguments to be passed to the executable</td>
-    </tr>
-    <tr cookies>
-      <td>Cookies</td>
-      <td><input type="checkbox" id="cookies"></td>
-    </tr>
-    <tr cookies>
-      <td></td>
-      <td class="note">Send the relevant cookies to the external application (if supported)</td>
-    </tr>
-    <tr>
-      <td colspan="2">Exclude the following <a href="https://developer.mozilla.org/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Complete_list_of_MIME_types">mime-types</a> when integration is enabled (downloading these mime-types are not being interrupted)</td>
-    </tr>
-    <tr>
-      <td colspan="2"><textarea style="width: 100%" rows="3" id="mimes"></textarea></td>
-    </tr>
-    <tr>
-      <td colspan="2">Comma-separated list of hostnames to interrupt the built-in download manager if the extension's interruption mode is enabled from the toolbar button. If the list is not empty, only downloading requests from these hostnames will be automatically interrupted and for all other hostnames, to send a job to the external download manager use the right-click context menu (on-demand mode). Note that the hostname belongs to the actual download URL, not the page URL.</td>
-    </tr>
-    <tr>
-      <td colspan="2"><textarea style="width: 100%" rows="3" id="whitelist" placeholder="e.g.: google.com, bing.com"></textarea></td>
-    </tr>
+    <colgroup>
+      <col width=80></col>
+      <col></col>
+    </colgroup>
+    <tbody>
+      <tr>
+        <td>Executable:</td>
+        <td>
+          <input type="text" id="executable" style="width: 100%; margin-top: 5px;">
+        </td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="note">Path to the executable</td>
+      </tr>
+      <tr>
+        <td>Arguments:</td>
+        <td>
+          <input type="text" id="args" style="width: 100%; margin-top: 5px;">
+        </td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="note">Arguments to be passed to the executable</td>
+      </tr>
+      <tr cookies>
+        <td>Cookies<sup>1</sup></td>
+        <td><input type="checkbox" id="cookies"></td>
+      </tr>
+      <tr autostart>
+        <td>Autostart<sup>4</sup></td>
+        <td><input type="checkbox" id="autostart"></td>
+      </tr>
+      <tr>
+        <td colspan="2">Exclude the following <a href="https://developer.mozilla.org/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Complete_list_of_MIME_types">mime-types</a> when integration is enabled<sup>2</sup></td>
+      </tr>
+      <tr>
+        <td colspan="2"><textarea style="width: 100%" rows="3" id="mimes"></textarea></td>
+      </tr>
+      <tr>
+        <td colspan="2">Comma-separated list of hostnames to interrupt the built-in download manager<sup>3</sup></td>
+      </tr>
+      <tr>
+        <td colspan="2"><textarea style="width: 100%" rows="3" id="whitelist" placeholder="e.g.: google.com, bing.com"></textarea></td>
+      </tr>
+    </tbody>
   </table>
 
   <div>
@@ -67,7 +79,16 @@
     <button id="support">Support Development</button> - <button id="save">Save</button>
     <span id="status"></span>
   </div>
-
+  <hr>
+  <div class="note">
+    <span>1. Send the relevant cookies to the external application (if supported)</span>
+    <br>
+    <span>2. Downloading files with these mime-types are not being interrupted</span>
+    <br>
+    <span>3. Only if the extension's interruption mode is enabled from the toolbar button. If the list is not empty, only downloading requests from these hostnames will be automatically interrupted and for all other hostnames, to send a job to the external download manager use the right-click context menu (on-demand mode). Note that the hostname belongs to the actual download URL, not the page URL.</span>
+    <br>
+    <span>4. If unchecked then the extension will request the external download manager to keep the jobs in the link grabber instead of automatically starting them  (if supported)</span>
+  </div>
   <script src="/config.js"></script>
   <script src="index.js"></script>
 </body>

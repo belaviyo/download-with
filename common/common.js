@@ -237,7 +237,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => sendTo({
   referrer: info.pageUrl
 }, tab));
 
-// one time; we used to use chrme.storage for storing mime-types
+// one time; we used to use chrome.storage for storing mime-types
 {
   const callback = () => chrome.storage.local.get({
     mimes: ['application/pdf'],
