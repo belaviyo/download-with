@@ -43,6 +43,9 @@
     "page": "data/options/index.html",
     "chrome_style": true
   },
+  "web_accessible_resources": [
+    "data/grab/index.html"
+  ],
   "applications": {
     "gecko": {
       "id": "{d1646fcf-76ad-49c5-b8b2-e496e9b71189}"

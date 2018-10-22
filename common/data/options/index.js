@@ -10,6 +10,8 @@ function restore() {
 
   document.getElementById('autostart').checked = localStorage.getItem('autostart') === '0' ? false : true;
 
+  document.getElementById('delay').value = localStorage.getItem('delay') || '1000';
+
   chrome.storage.local.get(Object.assign(config.command.guess, {
     cookies: false
   }), prefs => {
@@ -30,6 +32,7 @@ function save() {
     .split(/\s*,\s*/).filter((s, i, l) => s && l.indexOf(s) === i);
   localStorage.setItem('whitelist', whitelist.join('|'));
   localStorage.setItem('autostart', document.getElementById('autostart').checked ? 1 : 0);
+  localStorage.setItem('delay', Math.max(50, document.getElementById('delay').value));
   chrome.storage.local.set({
     executable,
     args,

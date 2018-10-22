@@ -1,0 +1,113 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Untitled Document</title>
+    <style>
+      body {
+        font-family: "Helvetica Neue",Helvetica,sans-serif;
+        font-size: 13px;
+        background-color: #fff;
+        display: flex;
+        flex-direction: column;
+        margin: 0 10px;
+        height: 100vh;
+      }
+      table {
+        table-layout: fixed;
+        border-collapse: collapse;
+        user-select: none;
+      }
+      tbody tr {
+        cursor: pointer;
+      }
+      tbody tr:nth-child(even) {
+        background-color: rgba(0, 0, 0, 0.1);
+      }
+      th {
+        text-align: left;
+      }
+      td {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      header,
+      footer {
+        display: flex;
+        min-height: 12px;
+      }
+      header {
+        border-bottom: solid 1px #ccc;
+        padding: 8px 0;
+      }
+      footer {
+        padding: 5px 0;
+        border-top: solid 1px #ccc;
+        align-items: center;
+      }
+      body[data-unknown=false] tr[data-type="unknown"],
+      body[data-html=false] tr[data-type="text/html"] {
+        display: none;
+      }
+      fieldset {
+        border: dotted 1px #adadad;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <template id="tr">
+        <tr>
+          <td><input type="checkbox"/></td>
+          <td data-id="link"></td>
+          <td data-id="type">...</td>
+        </tr>
+      </template>
+      <table width=100%>
+        <colgroup>
+          <col width=32/>
+          <col/>
+          <col width=120/>
+        </colgroup>
+        <thead>
+          <tr>
+            <th><input type="checkbox" id="toggle-select"/></th>
+            <th>URL</th>
+            <th>Type</th>
+          </tr>
+        </thead>
+      </table>
+    </header>
+    <div style="overflow: auto; flex: 1">
+      <table width=100%>
+        <colgroup>
+          <col width=32/>
+          <col/>
+          <col width=120/>
+        </colgroup>
+        <tbody></tbody>
+      </table>
+    </div>
+    <footer>
+      <fieldset>
+        <legend>Hide types:</legend>
+        <label><input type="checkbox" id="hide-unknown"/> unknown</label>&nbsp;
+        <label><input type="checkbox" id="hide-html"/> text/html</label>&nbsp;
+      </fieldset>
+      <fieldset>
+        <legend>Select:</legend>
+        <input type="button"  value="Images" data-cmd="image/"/></span>&nbsp;
+        <input type="button"  value="PDFs" data-cmd="application/pdf"/></span>&nbsp;
+        <input type="button"  value="Applications" data-cmd="application/"/>&nbsp;
+        <input type="text" placeholder="matched" id="matched"/>
+      </fieldset>
+      <span style="flex: 1"></span>
+      <span id="info"></span>&nbsp;
+      <input id="download" type="button" value="Download" disabled="true" data-cmd="download"/>
+    </footer>
+    <script src="index.js"></script>
+    <script src="persist.js"></script>
+  </body>
+</html>

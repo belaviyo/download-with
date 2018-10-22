@@ -27,7 +27,7 @@
   </style>
   <table>
     <colgroup>
-      <col width=80></col>
+      <col width=150></col>
       <col></col>
     </colgroup>
     <tbody>
@@ -60,6 +60,10 @@
         <td><input type="checkbox" id="autostart"></td>
       </tr>
       <tr>
+        <td>Delay (in milliseconds)<sup>5</sup></td>
+        <td><input type="number" id="delay" min=50></td>
+      </tr>
+      <tr>
         <td colspan="2">Exclude the following <a href="https://developer.mozilla.org/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Complete_list_of_MIME_types">mime-types</a> when integration is enabled<sup>2</sup></td>
       </tr>
       <tr>
@@ -88,6 +92,8 @@
     <span>3. Only if the extension's interruption mode is enabled from the toolbar button. If the list is not empty, only downloading requests from these hostnames will be automatically interrupted and for all other hostnames, to send a job to the external download manager use the right-click context menu (on-demand mode). Note that the hostname belongs to the actual download URL, not the page URL.</span>
     <br>
     <span>4. If unchecked then the extension will request the external download manager to keep the jobs in the link grabber instead of automatically starting them  (if supported)</span>
+    <br>
+    <span>5. Delay between requests when multiple jobs are sent to the external download manager</span>
   </div>
   <script src="/config.js"></script>
   <script src="index.js"></script>

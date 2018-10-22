@@ -228,14 +228,47 @@ onCommand(false);
       contexts: ['video', 'audio'],
       documentUrlPatterns: ['*://*/*']
     });
+    chrome.contextMenus.create({
+      id: 'grab',
+      title: 'Download all Links',
+      contexts: ['page'],
+      documentUrlPatterns: ['*://*/*']
+    });
   };
   chrome.runtime.onInstalled.addListener(callback);
   chrome.runtime.onStartup.addListener(callback);
 }
-chrome.contextMenus.onClicked.addListener((info, tab) => sendTo({
-  finalUrl: info.menuItemId === 'open-video' ? info.srcUrl : info.linkUrl,
-  referrer: info.pageUrl
-}, tab));
+chrome.contextMenus.onClicked.addListener((info, tab) => {
+  if (info.menuItemId === 'grab') {
+    chrome.tabs.executeScript({
+      runAt: 'document_start',
+      file: '/data/grab/inject.js'
+    });
+  }
+  else {
+    sendTo({
+      finalUrl: info.menuItemId === 'open-video' ? info.srcUrl : info.linkUrl,
+      referrer: info.pageUrl
+    }, tab);
+  }
+});
+
+//
+chrome.runtime.onMessage.addListener((request, sender, response) => {
+  if (request.method === 'exec') {
+    chrome.tabs.executeScript({
+      runAt: 'document_start',
+      code: request.code,
+      allFrames: true
+    }, response);
+    return true;
+  }
+  else if (request.method === 'download') {
+    sendTo(Object.assign({
+      referrer: sender.tab.url
+    }, request.job), sender.tab);
+  }
+});
 
 // one time; we used to use chrome.storage for storing mime-types
 {
