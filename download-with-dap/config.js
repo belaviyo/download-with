@@ -2,6 +2,13 @@
 
 var config = {};
 
+config.mode = {
+  get method() {
+    return 'parallel';
+  },
+  support: false
+};
+
 config.tag = 'dap';
 config.name = 'Download with Download Accelerator Plus';
 
@@ -30,7 +37,7 @@ config.command = {
   args: {
     Mac: '-a "DAP"',
     Win: '',
-    Lin: '',
+    Lin: ''
   },
   get guess() {
     const key = navigator.platform.substr(0, 3);

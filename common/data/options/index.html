@@ -60,7 +60,11 @@
         <td><input type="checkbox" id="autostart"></td>
       </tr>
       <tr>
-        <td>Delay (in milliseconds)<sup>5</sup></td>
+        <td>Batch mode<sup>5</sup></td>
+        <td><input type="checkbox" id="batch"></td>
+      </tr>
+      <tr>
+        <td>Delay (in milliseconds)<sup>6</sup></td>
         <td><input type="number" id="delay" min=50></td>
       </tr>
       <tr>
@@ -93,7 +97,9 @@
     <br>
     <span>4. If unchecked then the extension will request the external download manager to keep the jobs in the link grabber instead of automatically starting them  (if supported)</span>
     <br>
-    <span>5. Delay between requests when multiple jobs are sent to the external download manager</span>
+    <span>5. When multiple links are about to send to the external executable, the extension can send all of the links together or separately. If the external download manager supports multiple links in a single command, then check this box, otherwise, the extension will send each link individually with a defined delay. For command-line downloaders, batch sending links usually results in downloading files one after another.</span>
+    <br>
+    <span>6. Delay between requests when multiple jobs are sent to the external download manager (when batch mode is disabled)</span>
   </div>
   <script src="/config.js"></script>
   <script src="index.js"></script>

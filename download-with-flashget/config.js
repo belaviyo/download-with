@@ -2,6 +2,13 @@
 
 var config = {};
 
+config.mode = {
+  get method() {
+    return 'parallel';
+  },
+  supports: false
+};
+
 config.tag = 'flashget';
 config.name = 'Download with FlashGet';
 

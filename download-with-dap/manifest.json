@@ -9,7 +9,9 @@
     "nativeMessaging",
     "notifications",
     "downloads",
-    "contextMenus"
+    "contextMenus",
+    "https://api.github.com/repos/belaviyo/native-client/releases/latest",
+    "activeTab"
   ],
   "background": {
     "persistent": false,

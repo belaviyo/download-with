@@ -3,6 +3,14 @@
 
 var config = {};
 
+config.mode = {
+  get method() {
+    return 'parallel';
+  },
+  supports: false
+};
+
+
 config.tag = 'jdownloader';
 config.name = 'Download with JDownloader';
 

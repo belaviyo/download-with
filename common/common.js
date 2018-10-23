@@ -51,16 +51,21 @@ function execute(d) {
           prefs.args = prefs.args.replace(/\s[^\s]*\[FILENAME\][^\s]*\s/, ' ');
         }
 
+        let url = d.finalUrl || d.url;
+        if (Array.isArray(url)) {
+          url = url.join(config.mode.sep);
+        }
+
         const termref = {
           lineBuffer: prefs.args
-            .replace(/\[URL\]/g, d.finalUrl || d.url)
+            .replace(/\[URL\]/g, url)
             .replace(/\[REFERRER\]/g, d.referrer)
             .replace(/\[USERAGENT\]/g, navigator.userAgent)
             .replace(/\[FILENAME\]/g, (d.filename || '').split(/[/\\]/).pop())
             .replace(/\\/g, '\\\\')
         };
         p.parseLine(termref);
-
+console.log(12, termref.argv);
         chrome.runtime.sendNativeMessage('com.add0n.native_client', {
           permissions: ['child_process', 'path', 'os', 'crypto', 'fs'],
           args: [cookies, prefs.executable, ...termref.argv],

@@ -1,3 +1,4 @@
+/* globals config */
 'use strict';
 
 var cache = [];
@@ -77,7 +78,7 @@ document.addEventListener('change', e => {
     .filter(input => input.clientHeight);
   document.getElementById('download').disabled = inputs.length === 0;
   document.getElementById('download').inputs = inputs;
-  document.getElementById('info').textContent = inputs.length ? inputs.length + ' selected' : '';
+  document.getElementById('download').value = inputs.length ? `Download (${inputs.length})` : 'Download';
 });
 //
 document.addEventListener('click', async e => {
@@ -96,14 +97,24 @@ document.addEventListener('click', async e => {
     }));
   }
   else if (cmd === 'download') {
-    for (const input of e.target.inputs) {
+    if (config.mode.method === 'batch') {
       chrome.runtime.sendMessage({
         method: 'download',
         job: {
-          finalUrl: input.closest('tr').link
+          url: e.target.inputs.map(input => input.closest('tr').link)
         }
       });
-      await delay();
+    }
+    else {
+      for (const input of e.target.inputs) {
+        chrome.runtime.sendMessage({
+          method: 'download',
+          job: {
+            finalUrl: input.closest('tr').link
+          }
+        });
+        await delay();
+      }
     }
   }
 });

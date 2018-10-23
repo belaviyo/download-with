@@ -11,6 +11,10 @@ function restore() {
   document.getElementById('autostart').checked = localStorage.getItem('autostart') === '0' ? false : true;
 
   document.getElementById('delay').value = localStorage.getItem('delay') || '1000';
+  document.getElementById('batch').checked = config.mode.method === 'batch';
+  if (config.mode.support === false) {
+    document.getElementById('batch').closest('tr').style = 'opacity: 0.5; pointer-events: none;';
+  }
 
   chrome.storage.local.get(Object.assign(config.command.guess, {
     cookies: false
@@ -33,6 +37,7 @@ function save() {
   localStorage.setItem('whitelist', whitelist.join('|'));
   localStorage.setItem('autostart', document.getElementById('autostart').checked ? 1 : 0);
   localStorage.setItem('delay', Math.max(50, document.getElementById('delay').value));
+  localStorage.setItem('mode', document.getElementById('batch').checked ? 'batch' : 'parallel');
   chrome.storage.local.set({
     executable,
     args,

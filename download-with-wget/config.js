@@ -2,6 +2,21 @@
 
 var config = {};
 
+config.mode = {
+  get method() {
+    return localStorage.getItem('mode') || 'batch';
+  },
+  get sep() {
+    const key = navigator.platform.substr(0, 3);
+    return {
+      Mac: '\\" \\"',
+      Win: '" "',
+      Lin: '" "'
+    }[key];
+  },
+  supports: true
+};
+
 config.tag = 'wget';
 config.name = 'Download with Wget';
 

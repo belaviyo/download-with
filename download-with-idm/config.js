@@ -2,6 +2,14 @@
 
 var config = {};
 
+config.mode = {
+  get method() {
+    return 'parallel';
+  },
+  supports: false
+};
+
+
 config.tag = 'idm';
 config.name = 'Download with Internet Download Manager';
 

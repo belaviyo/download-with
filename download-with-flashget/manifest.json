@@ -10,7 +10,8 @@
     "notifications",
     "downloads",
     "contextMenus",
-    "https://api.github.com/repos/belaviyo/native-client/releases/latest"
+    "https://api.github.com/repos/belaviyo/native-client/releases/latest",
+    "activeTab"
   ],
   "background": {
     "persistent": false,

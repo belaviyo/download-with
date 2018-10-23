@@ -2,6 +2,13 @@
 
 var config = {};
 
+config.mode = {
+  get method() {
+    return 'parallel';
+  },
+  supports: false
+};
+
 config.tag = 'fdm';
 config.name = 'Download with Free Download Manager';
 

@@ -44,7 +44,6 @@
       footer {
         padding: 5px 0;
         border-top: solid 1px #ccc;
-        align-items: center;
       }
       body[data-unknown=false] tr[data-type="unknown"],
       body[data-html=false] tr[data-type="text/html"] {
@@ -52,6 +51,36 @@
       }
       fieldset {
         border: dotted 1px #adadad;
+      }
+      input {
+        font-size: 12px;
+        outline: none;
+      }
+      input[type=text] {
+        width: 100%;
+        box-sizing: border-box;
+        margin: 5px 0;
+      }
+      input[type=button] {
+        border: solid 1px #ccc;
+        border-radius: 2px;
+        cursor: pointer;
+      }
+      input[type=text],
+      input[type=button] {
+        padding: 2px 8px;
+      }
+      input:disabled {
+        cursor: default;
+        opacity: 0.4;
+      }
+      input:active {
+        opacity: 0.5;
+      }
+      ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
       }
     </style>
   </head>
@@ -92,21 +121,31 @@
     </div>
     <footer>
       <fieldset>
-        <legend>Hide types:</legend>
-        <label><input type="checkbox" id="hide-unknown"/> unknown</label>&nbsp;
-        <label><input type="checkbox" id="hide-html"/> text/html</label>&nbsp;
+        <legend>Hide types</legend>
+        <ul>
+          <li><label><input type="checkbox" id="hide-unknown"/> unknown</label></li>
+          <li><label><input type="checkbox" id="hide-html"/> text/html</label></li>
+        </ul>
       </fieldset>
       <fieldset>
-        <legend>Select:</legend>
-        <input type="button"  value="Images" data-cmd="image/"/></span>&nbsp;
-        <input type="button"  value="PDFs" data-cmd="application/pdf"/></span>&nbsp;
-        <input type="button"  value="Applications" data-cmd="application/"/>&nbsp;
-        <input type="text" placeholder="matched" id="matched"/>
+        <legend>Select</legend>
+        <ul>
+          <li>
+            <div>
+              <input type="button"  value="Images" data-cmd="image/"/>&nbsp;
+              <input type="button"  value="PDFs" data-cmd="application/pdf"/>&nbsp;
+              <input type="button"  value="Applications" data-cmd="application/"/>
+            </div>
+          </li>
+          <li><input type="text" placeholder="matching with" id="matched"/></li>
+        </ul>
       </fieldset>
       <span style="flex: 1"></span>
-      <span id="info"></span>&nbsp;
-      <input id="download" type="button" value="Download" disabled="true" data-cmd="download"/>
+      <div style="display: flex; align-items: center; justify-content: center;">
+        <input id="download" type="button" value="Download" disabled="true" data-cmd="download"/>
+      </div>
     </footer>
+    <script src="/config.js"></script>
     <script src="index.js"></script>
     <script src="persist.js"></script>
   </body>
