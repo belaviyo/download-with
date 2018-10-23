@@ -11,6 +11,15 @@ var type = (type, url) => {
     'jpg': 'image/jpg',
     'bmp': 'image/bmp',
     'gif': 'image/gif',
+    'mp3': 'video/mp3',
+    'wav': 'video/wav',
+    'wma': 'video/wma',
+    'ogg': 'video/ogg',
+    'mp4': 'video/mp4',
+    'flv': 'video/flv',
+    'avi': 'video/avi',
+    'mov': 'video/mov',
+    'wmv': 'video/wmv',
     'html': 'text/html',
     'pdf': 'application/pdf',
     'exe': 'application/octet-stream',
@@ -46,11 +55,15 @@ var resolve = async() => {
 
 chrome.runtime.sendMessage({
   method: 'exec',
-  code: `[...[...document.images].map(i => i.src), ...[...document.querySelectorAll('a')].map(a => a.href)]
-  .filter(s => s && (s.startsWith('http') || s.startsWith('ftp') || s.startsWith('data:')))`
+  code: `[
+    ...[...document.images].map(i => i.src),
+    ...[...document.querySelectorAll('a')].map(a => a.href),
+    ...[...document.querySelectorAll('video')].map(v => v.src),
+    ...[...document.querySelectorAll('source')].map(v => v.src)
+  ].filter(s => s && (s.startsWith('http') || s.startsWith('ftp') || s.startsWith('data:')))`
 }, resp => {
   const tbody = document.querySelector('tbody');
-  [].concat([], ...resp).forEach(link => {
+  [].concat([], ...resp).filter((s, i, l) => s && l.indexOf(s) === i).forEach(link => {
     const t = document.getElementById('tr');
     const clone = document.importNode(t.content, true);
     const tr = clone.querySelector('tr');
@@ -76,8 +89,8 @@ document.addEventListener('change', e => {
   const inputs = [...document.querySelectorAll('tbody input[type=checkbox]:checked')]
     // make sure element is visible
     .filter(input => input.clientHeight);
-  document.getElementById('download').disabled = inputs.length === 0;
-  document.getElementById('download').inputs = inputs;
+  document.getElementById('copy').disabled = document.getElementById('download').disabled = inputs.length === 0;
+  document.getElementById('copy').inputs = document.getElementById('download').inputs = inputs;
   document.getElementById('download').value = inputs.length ? `Download (${inputs.length})` : 'Download';
 });
 //
@@ -116,6 +129,16 @@ document.addEventListener('click', async e => {
         await delay();
       }
     }
+  }
+  else if (cmd === 'copy') {
+    const el = document.createElement('textarea');
+    el.value = e.target.inputs.map(input => input.closest('tr').link).join('\n');
+    el.style.position = 'absolute';
+    el.style.left = '-9999px';
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
   }
 });
 //

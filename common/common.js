@@ -236,7 +236,7 @@ onCommand(false);
     chrome.contextMenus.create({
       id: 'grab',
       title: 'Download all Links',
-      contexts: ['page'],
+      contexts: ['page', 'browser_action'],
       documentUrlPatterns: ['*://*/*']
     });
   };
@@ -248,6 +248,11 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
     chrome.tabs.executeScript({
       runAt: 'document_start',
       file: '/data/grab/inject.js'
+    }, () => {
+      const lastError = chrome.runtime.lastError;
+      if (lastError) {
+        notify(lastError.message);
+      }
     });
   }
   else {
@@ -265,7 +270,15 @@ chrome.runtime.onMessage.addListener((request, sender, response) => {
       runAt: 'document_start',
       code: request.code,
       allFrames: true
-    }, response);
+    }, r => {
+      const lastError = chrome.runtime.lastError;
+      if (lastError) {
+        notify(lastError.message);
+      }
+      else {
+        response(r);
+      }
+    });
     return true;
   }
   else if (request.method === 'download') {

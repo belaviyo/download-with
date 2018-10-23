@@ -18,12 +18,12 @@ config.command = {
   executable: {
     Mac: 'open',
     Win: '%ProgramFiles%\\FreeDownloadManager.ORG\\Free Download Manager\\fdm.exe',
-    Lin: 'fdm',
+    Lin: 'fdm'
   },
   args: {
     Mac: '-a "Free Download Manager" "[URL]"',
     Win: '"[URL]"',
-    Lin: '"[URL]"',
+    Lin: '"[URL]"'
   },
   get guess() {
     const key = navigator.platform.substr(0, 3);
