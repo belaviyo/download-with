@@ -55,7 +55,9 @@ function execute(d) {
         if (Array.isArray(url)) {
           url = url.join(config.mode.sep);
         }
-
+        if (!cookies) {
+          prefs.args = prefs.args.replace('--load-cookies=[COOKIES]', '');
+        }
         const termref = {
           lineBuffer: prefs.args
             .replace(/\[URL\]/g, url)
@@ -65,7 +67,7 @@ function execute(d) {
             .replace(/\\/g, '\\\\')
         };
         p.parseLine(termref);
-console.log(12, termref.argv);
+
         chrome.runtime.sendNativeMessage('com.add0n.native_client', {
           permissions: ['child_process', 'path', 'os', 'crypto', 'fs'],
           args: [cookies, prefs.executable, ...termref.argv],

@@ -1,7 +1,7 @@
 {
-  "name": "Download with Internet Download Manager (IDM)",
-  "description": "when activated, interrupts the built-in download manager to direct links to IDM",
-  "version": "0.1.9",
+  "name": "Download with aria2",
+  "description": "when activated, interrupts the built-in download manager to direct links to aria2",
+  "version": "0.1.0",
   "manifest_version": 2,
   "permissions": [
     "storage",
@@ -10,8 +10,8 @@
     "notifications",
     "downloads",
     "contextMenus",
-    "https://api.github.com/repos/belaviyo/native-client/releases/latest",
-    "activeTab"
+    "cookies",
+    "<all_urls>"
   ],
   "background": {
     "persistent": false,
@@ -39,17 +39,12 @@
      "128": "data/icons/128.png",
      "256": "data/icons/256.png"
   },
-  "homepage_url": "http://add0n.com/download-with.html?from=idm",
+  "homepage_url": "http://add0n.com/download-with.html?from=aria2",
   "options_ui": {
     "page": "data/options/index.html",
     "chrome_style": true
   },
   "web_accessible_resources": [
     "data/grab/index.html"
-  ],
-  "applications": {
-    "gecko": {
-      "id": "{d1646fcf-76ad-49c5-b8b2-e496e9b71189}"
-    }
-  }
+  ]
 }

@@ -1,7 +1,7 @@
 {
   "name": "Download with JDownloader",
   "description": "when activated, interrupts the built-in download manager to direct links to JDownloader",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "manifest_version": 2,
   "permissions": [
     "storage",
