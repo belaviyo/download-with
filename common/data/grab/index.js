@@ -1,11 +1,11 @@
 /* globals config */
 'use strict';
 
-var cache = [];
+const cache = [];
 
-var delay = () => new Promise(resolve => window.setTimeout(resolve, Number(localStorage.getItem('delay') || 1000)));
+const delay = () => new Promise(resolve => window.setTimeout(resolve, Number(localStorage.getItem('delay') || 1000)));
 
-var type = (type, url) => {
+const type = (type, url) => {
   const mimes = {
     'jpeg': 'image/jpeg',
     'jpg': 'image/jpg',
@@ -35,19 +35,18 @@ var type = (type, url) => {
   return (type || 'unknown').split(';')[0];
 };
 
-var analyze = tr => new Promise(resolve => {
-  const req = new XMLHttpRequest();
-  req.open('HEAD', tr.link);
-  req.timeout = 10000;
-  req.ontimeout = req.onerror = req.onload = () => {
+const analyze = tr => new Promise(resolve => {
+  chrome.runtime.sendMessage({
+    method: 'head',
+    link: tr.link
+  }, r => {
     tr.querySelector('[data-id=type]').textContent =
-      tr.dataset.type = type(req.getResponseHeader('content-type') || '', tr.link);
+      tr.dataset.type = type(r || '', tr.link);
     resolve();
-  };
-  req.send();
+  });
 });
 
-var resolve = async() => {
+const resolve = async () => {
   for (let i = 0; i < cache.length; i += 5) {
     await Promise.all(cache.slice(i, i + 5).map(analyze));
   }

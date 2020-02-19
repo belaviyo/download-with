@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>Untitled Document</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
       body {
         font-family: "Helvetica Neue",Helvetica,sans-serif;
@@ -10,7 +10,7 @@
         background-color: #fff;
         display: flex;
         flex-direction: column;
-        margin: 0 10px;
+        margin: 0;
         height: 100vh;
       }
       table {
@@ -22,28 +22,55 @@
         cursor: pointer;
       }
       tbody tr:nth-child(even) {
-        background-color: rgba(0, 0, 0, 0.1);
+        background-color: #f3f3f3;
       }
       th {
-        text-align: left;
+        background-color: #f3f3f3;
+        padding: 15px 0;
+        font-weight: normal;
       }
       td {
+        padding: 5px 0;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+      }
+      td:first-child {
+        text-align: center;
       }
       header,
       footer {
         display: flex;
         min-height: 12px;
+        padding: 10px;
+        background-color: #f3f3f3;
       }
-      header {
-        border-bottom: solid 1px #ccc;
-        padding: 8px 0;
+      #tools {
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
-      footer {
-        padding: 5px 0;
-        border-top: solid 1px #ccc;
+      #tools li {
+        text-align: right;
+      }
+      @media screen and (max-width: 600px)  {
+        footer {
+          display: grid;
+          grid-template-columns: 1fr;
+        }
+        #tools {
+          justify-content: flex-end;
+          margin-top: 10px;
+        }
+        #tools li {
+          display: inline-block;
+        }
+        #types {
+          display: none;
+        }
+        footer > span {
+          display: none;
+        }
       }
       body[data-unknown=false] tr[data-type="unknown"],
       body[data-html=false] tr[data-type="text/html"] {
@@ -51,6 +78,7 @@
       }
       fieldset {
         border: dotted 1px #adadad;
+        white-space: nowrap;
       }
       input {
         font-size: 12px;
@@ -62,13 +90,14 @@
         margin: 5px 0;
       }
       input[type=button] {
-        border: solid 1px #ccc;
         border-radius: 2px;
         cursor: pointer;
+        background-color: #fff;
+        border: none;
       }
       input[type=text],
       input[type=button] {
-        padding: 2px 8px;
+        padding: 5px 10px;
       }
       input:disabled {
         cursor: default;
@@ -96,15 +125,14 @@
       </template>
       <table width=100%>
         <colgroup>
-          <col width=32/>
+          <col width=48/>
           <col/>
           <col width=120/>
         </colgroup>
         <thead>
           <tr>
             <th><input type="checkbox" id="toggle-select"/></th>
-            <th>URL</th>
-            <th>Type</th>
+            <th colspan="2">Detect downloadable Links</th>
           </tr>
         </thead>
       </table>
@@ -112,7 +140,7 @@
     <div style="overflow: auto; flex: 1">
       <table width=100%>
         <colgroup>
-          <col width=32/>
+          <col width=48/>
           <col/>
           <col width=120/>
         </colgroup>
@@ -120,7 +148,7 @@
       </table>
     </div>
     <footer>
-      <fieldset>
+      <fieldset id="types">
         <legend>Hide types</legend>
         <ul>
           <li><label><input type="checkbox" id="hide-unknown"/> unknown</label></li>
@@ -141,7 +169,7 @@
         </ul>
       </fieldset>
       <span style="flex: 1"></span>
-      <div style="display: flex; align-items: center; justify-content: center;">
+      <div id="tools">
         <ul>
           <li><input id="download" type="button" value="Download" disabled="true" data-cmd="download"/></li>
           <li><input id="copy" type="button" value="Copy to Clipboard" disabled="true" data-cmd="copy" style="margin-top: 5px"/></li>

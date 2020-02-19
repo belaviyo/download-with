@@ -1,17 +1,17 @@
 {
   "name": "Download with Free Download Manager (FDM)",
   "description": "when activated, interrupts the built-in download manager to direct links to FDM",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "manifest_version": 2,
   "permissions": [
     "storage",
-    "tabs",
     "nativeMessaging",
     "notifications",
     "downloads",
-    "contextMenus",
-    "https://api.github.com/repos/belaviyo/native-client/releases/latest",
-    "activeTab"
+    "contextMenus"
+  ],
+  "optional_permissions": [
+    "*://*/*"
   ],
   "background": {
     "persistent": false,
@@ -27,6 +27,7 @@
       "19": "data/icons/disabled/19.png",
       "32": "data/icons/disabled/32.png",
       "38": "data/icons/disabled/38.png",
+      "48": "data/icons/disabled/48.png",
       "64": "data/icons/disabled/64.png"
     }
   },
@@ -35,21 +36,17 @@
      "19": "data/icons/19.png",
      "32": "data/icons/32.png",
      "38": "data/icons/38.png",
+     "48": "data/icons/48.png",
      "64": "data/icons/64.png",
      "128": "data/icons/128.png",
      "256": "data/icons/256.png"
   },
-  "homepage_url": "http://add0n.com/download-with.html?from=fdm",
+  "homepage_url": "https://add0n.com/download-with.html?from=fdm",
   "options_ui": {
     "page": "data/options/index.html",
     "chrome_style": true
   },
   "web_accessible_resources": [
     "data/grab/index.html"
-  ],
-  "applications": {
-    "gecko": {
-      "id": "{1fb1ffdc-b95d-451e-be52-7303adf9a0d3}"
-    }
-  }
+  ]
 }

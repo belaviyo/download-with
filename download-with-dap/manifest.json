@@ -1,17 +1,17 @@
 {
   "name": "Download with Download Accelerator Plus (DAP)",
   "description": "when activated, interrupts the built-in download manager to direct links to DAP",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "manifest_version": 2,
   "permissions": [
     "storage",
-    "tabs",
     "nativeMessaging",
     "notifications",
     "downloads",
-    "contextMenus",
-    "https://api.github.com/repos/belaviyo/native-client/releases/latest",
-    "activeTab"
+    "contextMenus"
+  ],
+  "optional_permissions": [
+    "*://*/*"
   ],
   "background": {
     "persistent": false,
@@ -24,7 +24,10 @@
   "browser_action": {
     "default_icon": {
       "16": "data/icons/disabled/16.png",
+      "19": "data/icons/disabled/19.png",
       "32": "data/icons/disabled/32.png",
+      "38": "data/icons/disabled/38.png",
+      "48": "data/icons/disabled/48.png",
       "64": "data/icons/disabled/64.png"
     }
   },
@@ -33,20 +36,16 @@
      "19": "data/icons/19.png",
      "32": "data/icons/32.png",
      "38": "data/icons/38.png",
+     "48": "data/icons/48.png",
      "64": "data/icons/64.png",
      "128": "data/icons/128.png"
   },
-  "homepage_url": "http://add0n.com/download-with.html?from=dap",
+  "homepage_url": "https://add0n.com/download-with.html?from=dap",
   "options_ui": {
     "page": "data/options/index.html",
     "chrome_style": true
   },
   "web_accessible_resources": [
     "data/grab/index.html"
-  ],
-  "applications": {
-    "gecko": {
-      "id": "{cfd8df21-e05f-46e9-8ea1-af5e5177d492}"
-    }
-  }
+  ]
 }

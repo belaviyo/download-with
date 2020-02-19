@@ -1,5 +1,18 @@
-/* globals config */
+/* global config */
 'use strict';
+
+document.getElementById('cookies').addEventListener('change', e => {
+  if (e.target.checked) {
+    chrome.permissions.request({
+      permissions: ['cookies'],
+      origins: ['*://*/*']
+    }, granted => {
+      if (!granted) {
+        e.target.checked = false;
+      }
+    });
+  }
+});
 
 function restore() {
   const mimes = (localStorage.getItem('mimes') || '').split('|');

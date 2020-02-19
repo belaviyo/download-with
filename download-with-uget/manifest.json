@@ -1,7 +1,7 @@
 {
-  "name": "Download with Wget",
-  "description": "when activated, interrupts the built-in download manager to direct links to Wget",
-  "version": "0.1.6",
+  "name": "Download with uGet",
+  "description": "when activated, interrupts the built-in download manager to direct links to uGet download manager",
+  "version": "0.1.0",
   "manifest_version": 2,
   "permissions": [
     "storage",
@@ -42,7 +42,7 @@
      "128": "data/icons/128.png",
      "256": "data/icons/256.png"
   },
-  "homepage_url": "https://add0n.com/download-with.html?from=wget",
+  "homepage_url": "https://add0n.com/download-with.html?from=uget",
   "options_ui": {
     "page": "data/options/index.html",
     "chrome_style": true

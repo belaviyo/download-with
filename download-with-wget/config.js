@@ -1,6 +1,7 @@
 'use strict';
 
-var config = {};
+const config = {};
+window.config = config;
 
 config.mode = {
   get method() {

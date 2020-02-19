@@ -1,7 +1,7 @@
 /* globals config, Parser */
 'use strict';
 
-var tools = {};
+const tools = {};
 tools.cookies = url => {
   if (!url || !chrome.cookies) {
     return Promise.resolve('');
@@ -27,12 +27,12 @@ tools.fetch = ({url, method = 'GET', headers = {}, data = {}}) => {
   });
 };
 
-function notify(message) {
+function notify(e) {
   chrome.notifications.create({
+    title: chrome.runtime.getManifest().name,
     type: 'basic',
     iconUrl: '/data/icons/48.png',
-    title: config.name,
-    message: message.message || message
+    message: e.message || e
   });
 }
 function execute(d) {
@@ -122,7 +122,7 @@ function execute(d) {
             chrome.tabs.create({
               url: '/data/guide/index.html'
             });
-            return reject();
+            return reject(Error('empty response'));
           }
           if (res && res.code !== 0) {
             return reject(res.stderr || res.error || res.err);
@@ -143,11 +143,10 @@ function sendTo(d, tab = {}) {
           id: d.id
         });
       }
-    })
-    .catch(e => e && notify(e));
+    }).catch(e => e && notify(e));
 }
 
-var id;
+let id;
 function observe(d, response = () => {}) {
   const mimes = localStorage.getItem('mimes') || '';
   if (mimes.indexOf(d.mime) !== -1) {
@@ -197,6 +196,7 @@ function changeState(enabled) {
       '19': 'data/icons/' + (enabled ? '' : 'disabled/') + '19.png',
       '32': 'data/icons/' + (enabled ? '' : 'disabled/') + '32.png',
       '38': 'data/icons/' + (enabled ? '' : 'disabled/') + '38.png',
+      '48': 'data/icons/' + (enabled ? '' : 'disabled/') + '48.png',
       '64': 'data/icons/' + (enabled ? '' : 'disabled/') + '64.png'
     }
   });
@@ -247,13 +247,22 @@ onCommand(false);
 }
 chrome.contextMenus.onClicked.addListener((info, tab) => {
   if (info.menuItemId === 'grab') {
-    chrome.tabs.executeScript({
-      runAt: 'document_start',
-      file: '/data/grab/inject.js'
-    }, () => {
-      const lastError = chrome.runtime.lastError;
-      if (lastError) {
-        notify(lastError.message);
+    chrome.permissions.request({
+      origins: ['*://*/*']
+    }, granted => {
+      if (granted) {
+        chrome.tabs.executeScript({
+          runAt: 'document_start',
+          file: '/data/grab/inject.js'
+        }, () => {
+          const lastError = chrome.runtime.lastError;
+          if (lastError) {
+            notify(lastError.message);
+          }
+        });
+      }
+      else {
+        notify('To extract links from all iframes of this page, the permission is needed');
       }
     });
   }
@@ -288,6 +297,20 @@ chrome.runtime.onMessage.addListener((request, sender, response) => {
       referrer: sender.tab.url
     }, request.job), sender.tab);
   }
+  else if (request.method === 'head') {
+    const req = new XMLHttpRequest();
+    req.open('GET', request.link);
+    req.timeout = 10000;
+    req.ontimeout = req.onerror = () => response('');
+    req.onreadystatechange = () => {
+      if (req.readyState === req.HEADERS_RECEIVED) {
+        response(req.getResponseHeader('content-type') || '');
+        req.abort();
+      }
+    };
+    req.send();
+    return true;
+  }
 });
 
 // one time; we used to use chrome.storage for storing mime-types
@@ -310,36 +333,28 @@ chrome.runtime.onMessage.addListener((request, sender, response) => {
 }
 
 // FAQs & Feedback
-chrome.storage.local.get({
-  'version': null,
-  'faqs': true,
-  'last-update': 0
-}, prefs => {
-  const version = chrome.runtime.getManifest().version;
-
-  if (prefs.version ? (prefs.faqs && prefs.version !== version) : true) {
-    const now = Date.now();
-    const doUpdate = (now - prefs['last-update']) / 1000 / 60 / 60 / 24 > 30;
-    chrome.storage.local.set({
-      version,
-      'last-update': doUpdate ? Date.now() : prefs['last-update']
-    }, () => {
-      // do not display the FAQs page if last-update occurred less than 30 days ago.
-      if (doUpdate) {
-        const p = Boolean(prefs.version);
-        chrome.tabs.create({
-          url: chrome.runtime.getManifest().homepage_url + '&version=' + version +
-            '&type=' + (p ? ('upgrade&p=' + prefs.version) : 'install'),
-          active: p === false
-        });
+{
+  const {onInstalled, setUninstallURL, getManifest} = chrome.runtime;
+  const {name, version} = getManifest();
+  const page = getManifest().homepage_url;
+  onInstalled.addListener(({reason, previousVersion}) => {
+    chrome.storage.local.get({
+      'faqs': true,
+      'last-update': 0
+    }, prefs => {
+      if (reason === 'install' || (prefs.faqs && reason === 'update')) {
+        const doUpdate = (Date.now() - prefs['last-update']) / 1000 / 60 / 60 / 24 > 45;
+        if (doUpdate && previousVersion !== version) {
+          chrome.tabs.create({
+            url: page + '&version=' + version +
+              (previousVersion ? '&p=' + previousVersion : '') +
+              '&type=' + reason,
+            active: reason === 'install'
+          });
+          chrome.storage.local.set({'last-update': Date.now()});
+        }
       }
     });
-  }
-});
-
-{
-  const {name, version} = chrome.runtime.getManifest();
-  chrome.runtime.setUninstallURL(
-    chrome.runtime.getManifest().homepage_url + '&rd=feedback&name=' + name + '&version=' + version
-  );
+  });
+  setUninstallURL(page + '&rd=feedback&name=' + encodeURIComponent(name) + '&version=' + version);
 }
