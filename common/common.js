@@ -232,48 +232,124 @@ chrome.browserAction.onClicked.addListener(onCommand);
 onCommand(false);
 
 // contextMenus
-{
-  const callback = () => {
-    chrome.contextMenus.create({
-      id: 'open-link',
-      title: config.name + ' (Link)',
-      contexts: ['link'],
-      documentUrlPatterns: ['*://*/*']
+const buildContexts = () => chrome.storage.local.get({
+  'context.open-link': true,
+  'context.open-video': true,
+  'context.grab': true,
+  'context.extract': true
+}, prefs => {
+  chrome.contextMenus.removeAll(() => {
+    if (prefs['context.open-link']) {
+      chrome.contextMenus.create({
+        id: 'open-link',
+        title: 'Download Link',
+        contexts: ['link'],
+        documentUrlPatterns: ['*://*/*']
+      });
+    }
+    if (prefs['context.open-video']) {
+      chrome.contextMenus.create({
+        id: 'open-video',
+        title: 'Download Media',
+        contexts: ['video', 'audio'],
+        documentUrlPatterns: ['*://*/*']
+      });
+    }
+    if (prefs['context.grab']) {
+      chrome.contextMenus.create({
+        id: 'grab',
+        title: 'Download all Links',
+        contexts: ['page', 'browser_action'],
+        documentUrlPatterns: ['*://*/*']
+      });
+    }
+    if (prefs['context.extract']) {
+      chrome.contextMenus.create({
+        id: 'extract',
+        title: 'Extract Links from Selection',
+        contexts: ['page', 'selection'],
+        documentUrlPatterns: ['*://*/*']
+      });
+    }
+  });
+});
+chrome.runtime.onInstalled.addListener(buildContexts);
+chrome.runtime.onStartup.addListener(buildContexts);
+chrome.storage.onChanged.addListener(prefs => {
+  if (Object.keys(prefs).some(s => s.startsWith('context.'))) {
+    buildContexts();
+  }
+});
+
+const links = {};
+chrome.tabs.onRemoved.addListener(id => delete links[id]);
+
+const grab = mode => chrome.tabs.executeScript({
+  runAt: 'document_start',
+  code: `window.mode = "${mode}"`
+}, () => {
+  const lastError = chrome.runtime.lastError;
+  if (lastError) {
+    notify(lastError.message);
+  }
+  else {
+    chrome.tabs.executeScript({
+      runAt: 'document_start',
+      file: '/data/grab/inject.js'
     });
-    chrome.contextMenus.create({
-      id: 'open-video',
-      title: config.name + ' (Media)',
-      contexts: ['video', 'audio'],
-      documentUrlPatterns: ['*://*/*']
-    });
-    chrome.contextMenus.create({
-      id: 'grab',
-      title: 'Download all Links',
-      contexts: ['page', 'browser_action'],
-      documentUrlPatterns: ['*://*/*']
-    });
-  };
-  chrome.runtime.onInstalled.addListener(callback);
-  chrome.runtime.onStartup.addListener(callback);
-}
+  }
+});
+
 chrome.contextMenus.onClicked.addListener((info, tab) => {
   if (info.menuItemId === 'grab') {
     chrome.permissions.request({
       origins: ['*://*/*']
     }, granted => {
       if (granted) {
-        chrome.tabs.executeScript({
-          runAt: 'document_start',
-          file: '/data/grab/inject.js'
+        grab('none');
+      }
+      else {
+        notify('To extract links from all iframes of this page, the permission is needed');
+      }
+    });
+  }
+  else if (info.menuItemId === 'extract') {
+    const es = info.selectionText.match(
+      /(?:(?:https?|ftp|file):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[A-Z0-9+&@#/%=~_|$])/igm
+    ) || [];
+    chrome.permissions.request({
+      origins: ['*://*/*']
+    }, granted => {
+      if (granted) {
+        chrome.tabs.executeScript(tab.id, {
+          frameId: info.frameId,
+          code: `window.extraLinks = ${JSON.stringify(es)};`
         }, () => {
           const lastError = chrome.runtime.lastError;
           if (lastError) {
             notify(lastError.message);
           }
+          else {
+            chrome.tabs.executeScript(tab.is, {
+              frameId: info.frameId,
+              file: 'data/grab/selection.js'
+            }, a => {
+              if (a && a[0]) {
+                const es = a[0].filter((s, i, l) => s && l.indexOf(s) === i);
+                if (es.length) {
+                  links[tab.id] = es;
+                  grab('serve');
+                }
+                else {
+                  notify('Cannot extract any link from selected text');
+                }
+              }
+            });
+          }
         });
       }
       else {
-        notify('To extract links from all iframes of this page, the permission is needed');
+        notify('To extract links and display the interface, this permission is needed');
       }
     });
   }
@@ -321,6 +397,9 @@ chrome.runtime.onMessage.addListener((request, sender, response) => {
     };
     req.send();
     return true;
+  }
+  else if (request.method === 'extracted-links') {
+    response(links[sender.tab.id] || []);
   }
 });
 

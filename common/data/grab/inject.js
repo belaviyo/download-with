@@ -27,7 +27,7 @@ chrome.storage.local.get({
     z-index: 10000000000;
     box-shadow: 0 0 0 10000px rgba(0, 0, 0, 0.3);
   `);
-  window.iframe.src = chrome.runtime.getURL('data/grab/index.html');
+  window.iframe.src = chrome.runtime.getURL('data/grab/index.html?mode=' + window.mode);
   document.body.appendChild(window.iframe);
 });
 

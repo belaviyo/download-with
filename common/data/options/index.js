@@ -30,11 +30,19 @@ function restore() {
   }
 
   chrome.storage.local.get(Object.assign(config.command.guess, {
-    cookies: false
+    'cookies': false,
+    'context.open-link': true,
+    'context.open-video': true,
+    'context.grab': true,
+    'context.extract': true
   }), prefs => {
     document.getElementById('executable').value = prefs.executable;
     document.getElementById('args').value = prefs.args;
     document.getElementById('cookies').checked = prefs.cookies;
+    document.getElementById('context.open-link').checked = prefs['context.open-link'];
+    document.getElementById('context.open-video').checked = prefs['context.open-video'];
+    document.getElementById('context.grab').checked = prefs['context.grab'];
+    document.getElementById('context.extract').checked = prefs['context.extract'];
   });
 }
 
@@ -54,7 +62,11 @@ function save() {
   chrome.storage.local.set({
     executable,
     args,
-    cookies
+    cookies,
+    'context.open-link': document.getElementById('context.open-link').checked,
+    'context.open-video': document.getElementById('context.open-video').checked,
+    'context.grab': document.getElementById('context.grab').checked,
+    'context.extract': document.getElementById('context.extract').checked
   }, () => {
     const status = document.getElementById('status');
     status.textContent = 'Options saved.';

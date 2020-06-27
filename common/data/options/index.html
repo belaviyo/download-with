@@ -7,9 +7,6 @@
 
 <body>
   <style type="text/css">
-  p {
-    margin: 3px 0;
-  }
   table {
     width: 100%;
   }
@@ -80,14 +77,30 @@
       </tr>
     </tbody>
   </table>
-
+  <table>
+    <tr>
+      <td><input type="checkbox" id="context.open-link"></td>
+      <td><label for="context.open-link">Display "Download Link" context menu item</label></td>
+    </tr>
+    <tr>
+      <td><input type="checkbox" id="context.open-video"></td>
+      <td><label for="context.open-video">Display "Download Media" context menu item</label></td>
+    </tr>
+    <tr>
+      <td><input type="checkbox" id="context.grab"></td>
+      <td><label for="context.grab">Display "Download all Links" context menu item</label></td>
+    </tr>
+    <tr>
+      <td><input type="checkbox" id="context.extract"></td>
+      <td><label for="context.extract">Display "Extract Links from Selection" context menu item</label></td>
+    </tr>
+  </table>
   <div id="explore"></div>
-
-  <div>
+  <p>
     <button id="reset">Reset</button>
     <button id="support">Support Development</button> - <button id="save">Save</button>
     <span id="status"></span>
-  </div>
+  </p>
   <hr>
   <div class="note">
     <span>1. Send the relevant cookies to the external application (if supported)</span>

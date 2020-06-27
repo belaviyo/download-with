@@ -1,6 +1,8 @@
 /* globals config */
 'use strict';
 
+const args = new URLSearchParams(location.search);
+
 const cache = [];
 
 const delay = () => new Promise(resolve => window.setTimeout(resolve, Number(localStorage.getItem('delay') || 1000)));
@@ -52,17 +54,9 @@ const resolve = async () => {
   }
 };
 
-chrome.runtime.sendMessage({
-  method: 'exec',
-  code: `[
-    ...[...document.images].map(i => i.src),
-    ...[...document.querySelectorAll('a')].map(a => a.href),
-    ...[...document.querySelectorAll('video')].map(v => v.src),
-    ...[...document.querySelectorAll('source')].map(v => v.src)
-  ].filter(s => s && (s.startsWith('http') || s.startsWith('ftp') || s.startsWith('data:')))`
-}, resp => {
-  const tbody = document.querySelector('tbody');
-  [].concat([], ...resp).filter((s, i, l) => s && l.indexOf(s) === i).forEach(link => {
+const tbody = document.querySelector('tbody');
+const next = links => {
+  links.filter((s, i, l) => s && l.indexOf(s) === i).forEach(link => {
     const t = document.getElementById('tr');
     const clone = document.importNode(t.content, true);
     const tr = clone.querySelector('tr');
@@ -71,7 +65,26 @@ chrome.runtime.sendMessage({
     cache.push(tr);
   });
   resolve();
-});
+};
+
+if (args.get('mode') === 'serve') {
+  chrome.runtime.sendMessage({
+    method: 'extracted-links'
+  }, next);
+}
+else {
+  chrome.runtime.sendMessage({
+    method: 'exec',
+    code: `[
+      ...[...document.images].map(i => i.src),
+      ...[...document.querySelectorAll('a')].map(a => a.href),
+      ...[...document.querySelectorAll('video')].map(v => v.src),
+      ...[...document.querySelectorAll('source')].map(v => v.src)
+    ].filter(s => s && (s.startsWith('http') || s.startsWith('ftp') || s.startsWith('data:')))`
+  }, resp => {
+    next([].concat([], ...resp));
+  });
+}
 
 //
 document.addEventListener('change', e => {
