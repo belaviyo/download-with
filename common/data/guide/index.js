@@ -44,7 +44,6 @@ var check = (silent = false, callback = () => {}) => chrome.runtime.sendNativeMe
   if (silent) {
     return;
   }
-  console.error(response);
   if (response) {
     notify.show('success', 'Native client version is ' + response.version);
   }

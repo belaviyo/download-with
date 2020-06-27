@@ -1,13 +1,12 @@
 <!DOCTYPE html>
 <html>
-<head><title>Options Page</title></head>
+<head>
+  <title>Options Page</title>
+  <meta charset="utf-8">
+</head>
+
 <body>
   <style type="text/css">
-  body {
-    font-family: "Helvetica Neue",Helvetica,sans-serif;
-    font-size: 13px;
-    min-width: 500px;
-  }
   p {
     margin: 3px 0;
   }
@@ -82,6 +81,8 @@
     </tbody>
   </table>
 
+  <div id="explore"></div>
+
   <div>
     <button id="reset">Reset</button>
     <button id="support">Support Development</button> - <button id="save">Save</button>
@@ -103,5 +104,6 @@
   </div>
   <script src="/config.js"></script>
   <script src="index.js"></script>
+  <script async src="matched.js"></script>
 </body>
 </html>

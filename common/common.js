@@ -42,6 +42,7 @@ function execute(d) {
         return notify('Command box is empty. Use options page to define one!');
       }
       const p = new Parser();
+      p.escapeExpressions = {}; // do not escape expressions
       tools.cookies(d.referrer).then(cookies => {
         // remove args that are not provided
         if (!d.referrer) {
@@ -66,14 +67,21 @@ function execute(d) {
             .replace(/\[FILENAME\]/g, (d.filename || '').split(/[/\\]/).pop())
             .replace(/\\/g, '\\\\')
         };
+
         p.parseLine(termref);
 
+        window.setTimeout(resolve, config.delay || 0);
         chrome.runtime.sendNativeMessage('com.add0n.native_client', {
           permissions: ['child_process', 'path', 'os', 'crypto', 'fs'],
           args: [cookies, prefs.executable, ...termref.argv],
           script: String.raw`
             const cookies = args[0];
-            const command = args[1].replace(/%([^%]+)%/g, (_, n) => env[n]);
+            const command = args[1].replace(/%([^%]+)%/g, (_, n) => {
+              if (n === 'ProgramFiles(x86)' && !env[n]) {
+                return env['ProgramFiles'];
+              }
+              return env[n];
+            });
             function execute () {
               const exe = require('child_process').spawn(command, args.slice(2), {
                 detached: true,
@@ -127,7 +135,6 @@ function execute(d) {
           if (res && res.code !== 0) {
             return reject(res.stderr || res.error || res.err);
           }
-          window.setTimeout(resolve, config.delay || 0);
         });
       });
     });
@@ -136,7 +143,11 @@ function execute(d) {
 
 function sendTo(d, tab = {}) {
   (config.pre ? config.pre.action() : Promise.resolve(false))
-    .then(running => !running && execute(d)).then(() => config.post && config.post.action(d, tab))
+    .then(running => !running && execute(d)).then(() => {
+      if (config.post) {
+        config.post.action(d, tab);
+      }
+    })
     .then(() => {
       if (d.id) {
         chrome.downloads.erase({
@@ -225,13 +236,13 @@ onCommand(false);
   const callback = () => {
     chrome.contextMenus.create({
       id: 'open-link',
-      title: config.name,
+      title: config.name + ' (Link)',
       contexts: ['link'],
       documentUrlPatterns: ['*://*/*']
     });
     chrome.contextMenus.create({
       id: 'open-video',
-      title: config.name,
+      title: config.name + ' (Media)',
       contexts: ['video', 'audio'],
       documentUrlPatterns: ['*://*/*']
     });
@@ -332,29 +343,29 @@ chrome.runtime.onMessage.addListener((request, sender, response) => {
   chrome.runtime.onInstalled.addListener(callback);
 }
 
-// FAQs & Feedback
+/* FAQs & Feedback */
 {
-  const {onInstalled, setUninstallURL, getManifest} = chrome.runtime;
-  const {name, version} = getManifest();
-  const page = getManifest().homepage_url;
-  onInstalled.addListener(({reason, previousVersion}) => {
-    chrome.storage.local.get({
-      'faqs': true,
-      'last-update': 0
-    }, prefs => {
-      if (reason === 'install' || (prefs.faqs && reason === 'update')) {
-        const doUpdate = (Date.now() - prefs['last-update']) / 1000 / 60 / 60 / 24 > 45;
-        if (doUpdate && previousVersion !== version) {
-          chrome.tabs.create({
-            url: page + '&version=' + version +
-              (previousVersion ? '&p=' + previousVersion : '') +
-              '&type=' + reason,
-            active: reason === 'install'
-          });
-          chrome.storage.local.set({'last-update': Date.now()});
+  const {management, runtime: {onInstalled, setUninstallURL, getManifest}, storage, tabs} = chrome;
+  if (navigator.webdriver !== true) {
+    const page = getManifest().homepage_url;
+    const {name, version} = getManifest();
+    onInstalled.addListener(({reason, previousVersion}) => {
+      management.getSelf(({installType}) => installType === 'normal' && storage.local.get({
+        'faqs': true,
+        'last-update': 0
+      }, prefs => {
+        if (reason === 'install' || (prefs.faqs && reason === 'update')) {
+          const doUpdate = (Date.now() - prefs['last-update']) / 1000 / 60 / 60 / 24 > 45;
+          if (doUpdate && previousVersion !== version) {
+            tabs.create({
+              url: page + '&version=' + version + (previousVersion ? '&p=' + previousVersion : '') + '&type=' + reason,
+              active: reason === 'install'
+            });
+            storage.local.set({'last-update': Date.now()});
+          }
         }
-      }
+      }));
     });
-  });
-  setUninstallURL(page + '&rd=feedback&name=' + encodeURIComponent(name) + '&version=' + version);
+    setUninstallURL(page + '&rd=feedback&name=' + encodeURIComponent(name) + '&version=' + version);
+  }
 }
