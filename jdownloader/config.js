@@ -1,7 +1,11 @@
 /* globals tools */
 'use strict';
 
-const config = {};
+const config = {
+  get remote() {
+    return localStorage.getItem('remote') || 'http://127.0.0.1:9666/';
+  }
+};
 window.config = config;
 
 config.mode = {
@@ -14,7 +18,6 @@ config.mode = {
 
 config.tag = 'jdownloader';
 config.name = 'Download with JDownloader';
-
 
 config.cookies = true;
 
@@ -30,7 +33,9 @@ Object.defineProperty(config, 'autostart', {
 });
 
 config.pre = {
-  url: 'http://127.0.0.1:9666/flash/',
+  get url() {
+    return config.remote + 'flash/';
+  },
   action: () => tools.fetch(config.pre).then(() => true, () => false)
 };
 
@@ -55,7 +60,9 @@ config.command = {
 };
 
 config.post = {
-  url: 'http://127.0.0.1:9666/flashgot',
+  get url() {
+    return config.remote + 'flashgot';
+  },
   method: 'POST',
   action: (d, tab) => (d.referrer ? tools.cookies(d.referrer) : Promise.resolve('')).then(cookies => {
     let index = 0;

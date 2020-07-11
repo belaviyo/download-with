@@ -7,19 +7,49 @@
 
 <body>
   <style type="text/css">
-  table {
-    width: 100%;
-  }
-  hr {
-    border: none;
-    border-top: dashed 1px #ccc;
-    padding: 0;
-    margin: 10px 0;
-  }
-  .note {
-    font-size: 90%;
-    font-color: #ccc;
-  }
+    body {
+      background-color: #fff;
+      color: #3C4043;
+    }
+    @supports (-moz-appearance:none) {
+      body {
+        font-size: 13px;
+        font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+      }
+      button,
+      input[type=submit],
+      input[type=button] {
+        height: 24px;
+        color: rgb(68, 68, 68);
+        background-image: linear-gradient(rgb(237, 237, 237), rgb(237, 237, 237) 38%, rgb(222, 222, 222));
+        box-shadow: rgba(0, 0, 0, 0.08) 0 1px 0, rgba(255, 255, 255, 0.75) 0 1px 2px inset;
+        text-shadow: rgb(240, 240, 240) 0 1px 0;
+        border: solid 1px rgba(0, 0, 0, 0.25);
+      }
+      input[type=button]:disabled {
+        opacity: 0.2;
+      }
+      textarea {
+        padding: 5px;
+        box-sizing: border-box;
+      }
+    }
+    table {
+      width: 100%;
+    }
+    hr {
+      border: none;
+      border-top: dashed 1px #ccc;
+      padding: 0;
+      margin: 10px 0;
+    }
+    .note {
+      font-size: 90%;
+      font-color: #ccc;
+    }
+    .hidden {
+      display: none;
+    }
   </style>
   <table>
     <colgroup>
@@ -41,6 +71,12 @@
         <td>Arguments:</td>
         <td>
           <input type="text" id="args" style="width: 100%; margin-top: 5px;">
+        </td>
+      </tr>
+      <tr class="hidden">
+        <td>Remote Server:</td>
+        <td>
+          <input type="text" id="remote" style="width: 100%; margin-top: 5px;">
         </td>
       </tr>
       <tr>

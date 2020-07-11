@@ -29,6 +29,11 @@ function restore() {
     document.getElementById('batch').closest('tr').style = 'opacity: 0.5; pointer-events: none;';
   }
 
+  if (config.remote) {
+    document.getElementById('remote').value = config.remote;
+    document.getElementById('remote').closest('tr').classList.remove('hidden');
+  }
+
   chrome.storage.local.get(Object.assign(config.command.guess, {
     'cookies': false,
     'context.open-link': true,
@@ -59,6 +64,7 @@ function save() {
   localStorage.setItem('autostart', document.getElementById('autostart').checked ? 1 : 0);
   localStorage.setItem('delay', Math.max(50, document.getElementById('delay').value));
   localStorage.setItem('mode', document.getElementById('batch').checked ? 'batch' : 'parallel');
+  localStorage.setItem('remote', document.getElementById('remote').value);
   chrome.storage.local.set({
     executable,
     args,

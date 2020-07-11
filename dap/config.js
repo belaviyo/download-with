@@ -1,6 +1,11 @@
 'use strict';
 
-var config = {};
+const config = {
+  get remote() {
+    return localStorage.getItem('remote') || 'http://127.0.0.1:10029';
+  }
+};
+window.config = config;
 
 config.mode = {
   get method() {
@@ -22,7 +27,9 @@ config.detached = true;
 config.cookies = false;
 
 config.pre = {
-  url: 'http://127.0.0.1:10029',
+  get url() {
+    return config.remote;
+  },
   action: () => new Promise(resolve => {
     const req = new XMLHttpRequest();
     req.open('GET', config.pre.url);
@@ -53,7 +60,9 @@ config.command = {
 };
 
 config.post = {
-  url: 'http://127.0.0.1:10029',
+  get url() {
+    return config.remote;
+  },
   method: 'GET',
   action: d => {
     function get(url) {
