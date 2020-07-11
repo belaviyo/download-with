@@ -43,12 +43,21 @@
       padding: 0;
       margin: 10px 0;
     }
+    code {
+      padding: 1px 2px;
+      background-color: rgba(0,0,0,0.1);
+      font-family: inherit;
+    }
     .note {
-      font-size: 90%;
-      font-color: #ccc;
+      padding-bottom: 5px;
     }
     .hidden {
       display: none;
+    }
+    .disabled {
+      opacity: 0.5;
+      pointer-events: none;
+      text-decoration: line-through;
     }
   </style>
   <table>
@@ -81,7 +90,7 @@
       </tr>
       <tr>
         <td></td>
-        <td class="note">Arguments to be passed to the executable</td>
+        <td class="note">Arguments to be passed to the executable. List of supported arguments: <code>[URL]</code> (Link URL or image, video, and audio source), <code>[REFERRER]</code> (URL of the parent page), <code>[USERAGENT]</code> (User-agent string), <code>[FILENAME]</code> (Detected filename for the link), <code>[DISK]</code> (Absolute path of the file on the user disk), <code>[COOKIES]</code> (Absolute path to a text file containing relevant cookies) (available only if supported by the download manager).</td>
       </tr>
       <tr cookies>
         <td><label for="cookies">Cookies</label></td>

@@ -85,10 +85,10 @@ document.addEventListener('DOMContentLoaded', restore);
 document.getElementById('save').addEventListener('click', save);
 
 if (!config.cookies) {
-  [...document.querySelectorAll('[cookies]')].forEach(e => e.style = 'opacity: 0.5; pointer-events: none;');
+  [...document.querySelectorAll('[cookies]')].forEach(e => e.classList.add('disabled'));
 }
 if (!('autostart' in config)) {
-  [...document.querySelectorAll('[autostart]')].forEach(e => e.style = 'opacity: 0.5; pointer-events: none;');
+  [...document.querySelectorAll('[autostart]')].forEach(e => e.classList.add('disabled'));
 }
 
 document.getElementById('reset').addEventListener('click', e => {

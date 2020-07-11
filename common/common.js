@@ -50,6 +50,7 @@ function execute(d) {
         }
         if (!d.filename) {
           prefs.args = prefs.args.replace(/\s[^\s]*\[FILENAME\][^\s]*\s/, ' ');
+          prefs.args = prefs.args.replace(/\s[^\s]*\[DISK][^\s]*\s/, ' ');
         }
 
         let url = d.finalUrl || d.url;
@@ -65,6 +66,7 @@ function execute(d) {
             .replace(/\[REFERRER\]/g, d.referrer)
             .replace(/\[USERAGENT\]/g, navigator.userAgent)
             .replace(/\[FILENAME\]/g, (d.filename || '').split(/[/\\]/).pop())
+            .replace(/\[DISK\]/g, (d.filename || ''))
             .replace(/\\/g, '\\\\')
         };
 
