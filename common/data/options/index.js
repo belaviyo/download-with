@@ -23,7 +23,7 @@ function restore() {
 
   document.getElementById('autostart').checked = localStorage.getItem('autostart') === '0' ? false : true;
 
-  document.getElementById('delay').value = localStorage.getItem('delay') || '1000';
+  document.getElementById('delay').value = Number(config.delay || localStorage.getItem('delay') || '1000');
   document.getElementById('batch').checked = config.mode.method === 'batch';
   if (config.mode.support === false) {
     document.getElementById('batch').closest('tr').style = 'opacity: 0.5; pointer-events: none;';

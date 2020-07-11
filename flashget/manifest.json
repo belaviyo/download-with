@@ -1,7 +1,7 @@
 {
   "name": "Download with FlashGet™",
   "description": "Optionally send your downloading jobs to the well-known FlashGet™ download manager",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "manifest_version": 2,
   "permissions": [
     "storage",
@@ -34,7 +34,8 @@
   "homepage_url": "https://add0n.com/download-with.html?from=flashget",
   "options_ui": {
     "page": "data/options/index.html",
-    "chrome_style": true
+    "chrome_style": true,
+    "open_in_tab": true
   },
   "web_accessible_resources": [
     "data/grab/index.html"

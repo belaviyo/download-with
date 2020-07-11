@@ -44,8 +44,13 @@
         min-height: 12px;
         background-color: #f3f3f3;
       }
+      header {
+        padding: 10px 0;
+        border-bottom: solid 1px #e4e4e4;
+      }
       footer {
         padding: 10px;
+        border-top: solid 1px #e4e4e4;
       }
       #tools {
         display: flex;
@@ -54,6 +59,9 @@
       }
       #tools li {
         text-align: right;
+      }
+      #tools input {
+        min-width: 120px;
       }
       @media screen and (max-width: 600px)  {
         footer {
@@ -90,6 +98,8 @@
         width: 100%;
         box-sizing: border-box;
         margin: 5px 0;
+        background-color: #fff;
+        border: none;
       }
       input[type=button] {
         border-radius: 2px;
@@ -104,9 +114,6 @@
       input:disabled {
         cursor: default;
         opacity: 0.4;
-      }
-      input:active {
-        opacity: 0.5;
       }
       ul {
         list-style: none;

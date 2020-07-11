@@ -12,7 +12,11 @@ config.mode = {
 config.tag = 'dap';
 config.name = 'Download with Download Accelerator Plus';
 
-config.delay = 5000;
+Object.defineProperty(config, 'delay', {
+  get() {
+    return Number(localStorage.getItem('delay') || '5000');
+  }
+});
 config.detached = true;
 
 config.cookies = false;

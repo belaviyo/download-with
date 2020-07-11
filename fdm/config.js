@@ -18,7 +18,7 @@ config.cookies = false;
 config.command = {
   executable: {
     Mac: 'open',
-    Win: '%ProgramFiles%\\FreeDownloadManager.ORG\\Free Download Manager\\fdm.exe',
+    Win: '%ProgramFiles%\\Softdeluxe\\Free Download Manager\\fdm.exe',
     Lin: 'fdm'
   },
   args: {

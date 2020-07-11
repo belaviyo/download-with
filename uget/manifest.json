@@ -36,7 +36,8 @@
   "homepage_url": "https://add0n.com/download-with.html?from=uget",
   "options_ui": {
     "page": "data/options/index.html",
-    "chrome_style": true
+    "chrome_style": true,
+    "open_in_tab": true
   },
   "web_accessible_resources": [
     "data/grab/index.html"

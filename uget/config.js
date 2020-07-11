@@ -13,7 +13,11 @@ config.mode = {
 config.tag = 'uget';
 config.name = 'Download with uGet';
 
-config.delay = 5000;
+Object.defineProperty(config, 'delay', {
+  get() {
+    return Number(localStorage.getItem('delay') || '5000');
+  }
+});
 config.detached = true;
 
 config.cookies = true;

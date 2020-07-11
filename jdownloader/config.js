@@ -20,7 +20,7 @@ config.cookies = true;
 
 Object.defineProperty(config, 'delay', {
   get() {
-    return Number(localStorage.getItem('delay') || 5) * 1000;
+    return Number(localStorage.getItem('delay') || '1000');
   }
 });
 Object.defineProperty(config, 'autostart', {
@@ -79,7 +79,6 @@ config.post = {
         throw new Error('Connection is rejected by JDownloader');
       }
     }).catch(e => {
-      console.log(e, index);
       index += 1;
       if (index < 20 && e.message !== 'Connection is rejected by JDownloader') {
         return delay(config.delay).then(once);

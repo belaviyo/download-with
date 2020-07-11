@@ -1,7 +1,7 @@
 {
   "name": "Download with Download Accelerator Plus (DAP)",
   "description": "when activated, interrupts the built-in download manager to direct links to DAP",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "manifest_version": 2,
   "permissions": [
     "storage",
@@ -34,7 +34,8 @@
   "homepage_url": "https://add0n.com/download-with.html?from=dap",
   "options_ui": {
     "page": "data/options/index.html",
-    "chrome_style": true
+    "chrome_style": true,
+    "open_in_tab": true
   },
   "web_accessible_resources": [
     "data/grab/index.html"

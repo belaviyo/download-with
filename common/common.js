@@ -70,7 +70,8 @@ function execute(d) {
 
         p.parseLine(termref);
 
-        window.setTimeout(resolve, config.delay || 0);
+        window.setTimeout(resolve, config.delay || 5000);
+
         chrome.runtime.sendNativeMessage('com.add0n.native_client', {
           permissions: ['child_process', 'path', 'os', 'crypto', 'fs'],
           args: [cookies, prefs.executable, ...termref.argv],
@@ -91,6 +92,7 @@ function execute(d) {
               exe.stdout.on('data', data => stdout += data);
               exe.stderr.on('data', data => stderr += data);
 
+              stdout += command;
               exe.on('close', code => {
                 push({code, stdout, stderr});
                 done();
@@ -132,8 +134,16 @@ function execute(d) {
             });
             return reject(Error('empty response'));
           }
-          if (res && res.code !== 0) {
-            return reject(res.stderr || res.error || res.err);
+          else if (res.code !== 0) {
+            const msg = res.stderr || res.error || res.err;
+            console.warn(msg);
+            if (msg && msg.indexOf('ENOENT') !== -1) {
+              return reject(Error('Executable path cannot be located. Go to the options page and fix the path.'));
+            }
+            return reject(Error(msg));
+          }
+          else {
+            resolve();
           }
         });
       });
@@ -250,8 +260,8 @@ const buildContexts = () => chrome.storage.local.get({
     if (prefs['context.open-video']) {
       chrome.contextMenus.create({
         id: 'open-video',
-        title: 'Download Media',
-        contexts: ['video', 'audio'],
+        title: 'Download Media or Image',
+        contexts: ['video', 'audio', 'image'],
         documentUrlPatterns: ['*://*/*']
       });
     }
@@ -267,7 +277,7 @@ const buildContexts = () => chrome.storage.local.get({
       chrome.contextMenus.create({
         id: 'extract',
         title: 'Extract Links from Selection',
-        contexts: ['page', 'selection'],
+        contexts: ['selection'],
         documentUrlPatterns: ['*://*/*']
       });
     }
@@ -363,7 +373,10 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 
 //
 chrome.runtime.onMessage.addListener((request, sender, response) => {
-  if (request.method === 'exec') {
+  if (request.method === 'notify') {
+    notify(request.message);
+  }
+  else if (request.method === 'exec') {
     chrome.tabs.executeScript({
       runAt: 'document_start',
       code: request.code,
@@ -383,6 +396,31 @@ chrome.runtime.onMessage.addListener((request, sender, response) => {
     sendTo(Object.assign({
       referrer: sender.tab.url
     }, request.job), sender.tab);
+  }
+  else if (request.method === 'download-links') {
+    if (config.mode.method === 'batch') {
+      sendTo({
+        ...request.job,
+        referrer: sender.tab.url
+      }, sender.tab);
+    }
+    else {
+      (async () => {
+        const delay = () => new Promise(resolve => window.setTimeout(resolve, Number(localStorage.getItem('delay') || 1000)));
+
+        for (const finalUrl of request.job.url) {
+          sendTo({
+            finalUrl,
+            referrer: sender.tab.url
+          }, sender.tab);
+
+          await delay();
+        }
+      })();
+    }
+    chrome.tabs.sendMessage(sender.tab.id, {
+      cmd: 'close-me'
+    });
   }
   else if (request.method === 'head') {
     const req = new XMLHttpRequest();

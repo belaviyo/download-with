@@ -1,11 +1,8 @@
-/* globals config */
 'use strict';
 
 const args = new URLSearchParams(location.search);
 
 const cache = [];
-
-const delay = () => new Promise(resolve => window.setTimeout(resolve, Number(localStorage.getItem('delay') || 1000)));
 
 const type = (type, url) => {
   const mimes = {
@@ -106,6 +103,11 @@ document.addEventListener('change', e => {
   document.getElementById('download').value = inputs.length ? `Download (${inputs.length})` : 'Download';
 });
 //
+const notify = message => chrome.runtime.sendMessage({
+  method: 'notify',
+  message
+});
+
 document.addEventListener('click', async e => {
   const cmd = e.target.dataset.cmd || '';
   if (cmd === 'image/' || cmd === 'application/pdf' || cmd === 'application/') {
@@ -122,35 +124,31 @@ document.addEventListener('click', async e => {
     }));
   }
   else if (cmd === 'download') {
-    if (config.mode.method === 'batch') {
-      chrome.runtime.sendMessage({
-        method: 'download',
-        job: {
-          url: e.target.inputs.map(input => input.closest('tr').link)
-        }
-      });
-    }
-    else {
-      for (const input of e.target.inputs) {
-        chrome.runtime.sendMessage({
-          method: 'download',
-          job: {
-            finalUrl: input.closest('tr').link
-          }
-        });
-        await delay();
+    chrome.runtime.sendMessage({
+      method: 'download-links',
+      job: {
+        url: e.target.inputs.map(input => input.closest('tr').link)
       }
-    }
+    });
   }
   else if (cmd === 'copy') {
-    const el = document.createElement('textarea');
-    el.value = e.target.inputs.map(input => input.closest('tr').link).join('\n');
-    el.style.position = 'absolute';
-    el.style.left = '-9999px';
-    document.body.appendChild(el);
-    el.select();
-    document.execCommand('copy');
-    document.body.removeChild(el);
+    const links = e.target.inputs.map(input => input.closest('tr').link);
+    navigator.clipboard.writeText(links.join('\n')).catch(e => {
+      const el = document.createElement('textarea');
+      el.value = links.join('\n');
+      el.style.position = 'absolute';
+      el.style.left = '-9999px';
+      document.body.appendChild(el);
+      el.select();
+      const r = document.execCommand('copy');
+      document.body.removeChild(el);
+      if (!r) {
+        throw e;
+      }
+    }).then(
+      () => notify(links.length + ' link(s) copied to the clipboard'),
+      e => notify(e.message)
+    );
   }
 });
 //
