@@ -1,7 +1,7 @@
 {
   "name": "Download with Download Accelerator Plus (DAP)",
   "description": "when activated, interrupts the built-in download manager to direct links to DAP",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "manifest_version": 2,
   "permissions": [
     "storage",

@@ -1,7 +1,7 @@
 {
   "name": "Download with Free Download Manager (FDM)",
   "description": "when activated, interrupts the built-in download manager to direct links to FDM",
-  "version": "0.1.9",
+  "version": "0.2.0",
   "manifest_version": 2,
   "permissions": [
     "storage",

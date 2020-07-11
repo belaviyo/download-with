@@ -73,7 +73,6 @@ function execute(d) {
         p.parseLine(termref);
 
         window.setTimeout(resolve, config.delay || 5000);
-
         chrome.runtime.sendNativeMessage('com.add0n.native_client', {
           permissions: ['child_process', 'path', 'os', 'crypto', 'fs'],
           args: [cookies, prefs.executable, ...termref.argv],
