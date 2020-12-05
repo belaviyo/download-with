@@ -1,17 +1,16 @@
 {
-  "name": "Download with FlashGet™",
-  "description": "Optionally send your downloading jobs to the well-known FlashGet™ download manager",
-  "version": "0.1.6",
+  "name": "Download with FlashGet",
+  "description": "when activated, interrupts the built-in download manager to direct links to FlashGet",
+  "version": "0.1.0",
   "manifest_version": 2,
   "permissions": [
     "storage",
+    "tabs",
     "nativeMessaging",
     "notifications",
     "downloads",
-    "contextMenus"
-  ],
-  "optional_permissions": [
-    "*://*/*"
+    "contextMenus",
+    "https://api.github.com/repos/belaviyo/native-client/releases/latest"
   ],
   "background": {
     "persistent": false,
@@ -21,23 +20,22 @@
       "common.js"
     ]
   },
-  "browser_action": {},
+  "browser_action": {
+    "default_icon": {
+      "16": "data/icons/disabled/16.png",
+      "32": "data/icons/disabled/32.png",
+      "64": "data/icons/disabled/64.png"
+    }
+  },
   "icons": {
      "16": "data/icons/16.png",
-     "19": "data/icons/19.png",
      "32": "data/icons/32.png",
-     "38": "data/icons/38.png",
-     "48": "data/icons/48.png",
      "64": "data/icons/64.png",
      "128": "data/icons/128.png"
   },
-  "homepage_url": "https://add0n.com/download-with.html?from=flashget",
+  "homepage_url": "http://add0n.com/dowlnoad-with.html?from=flashget",
   "options_ui": {
     "page": "data/options/index.html",
-    "chrome_style": true,
-    "open_in_tab": true
-  },
-  "web_accessible_resources": [
-    "data/grab/index.html"
-  ]
+    "chrome_style": true
+  }
 }

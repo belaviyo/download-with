@@ -33,3 +33,4 @@ config.command = {
     };
   }
 };
+"C:\Program Files (x86)\FlashGet Network\FlashGet 3"
