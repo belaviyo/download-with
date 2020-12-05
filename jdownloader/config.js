@@ -1,54 +1,30 @@
 /* globals tools */
 'use strict';
 
-const config = {
-  get remote() {
-    return localStorage.getItem('remote') || 'http://127.0.0.1:9666/';
-  }
-};
-window.config = config;
-
-config.mode = {
-  get method() {
-    return 'parallel';
-  },
-  supports: false
-};
-
+var config = {};
 
 config.tag = 'jdownloader';
 config.name = 'Download with JDownloader';
 
+config.delay = 5000;
+
 config.cookies = true;
 
-Object.defineProperty(config, 'delay', {
-  get() {
-    return Number(localStorage.getItem('delay') || '1000');
-  }
-});
-Object.defineProperty(config, 'autostart', {
-  get() {
-    return Number(localStorage.getItem('autostart') || 1);
-  }
-});
-
 config.pre = {
-  get url() {
-    return config.remote + 'flash/';
-  },
+  url: 'http://127.0.0.1:9666/flash/',
   action: () => tools.fetch(config.pre).then(() => true, () => false)
 };
 
 config.command = {
   executable: {
     Mac: 'open',
-    Win: '%LocalAppData%\\JDownloader 2.0\\JDownloader2.exe',
-    Lin: 'JDownloader2'
+    Win: '%LocalAppData%\\JDownloader v2.0\\JDownloader2.exe',
+    Lin: 'JDownloader2',
   },
   args: {
     Mac: '-a "JDownloader2"',
     Win: '',
-    Lin: ''
+    Lin: '',
   },
   get guess() {
     const key = navigator.platform.substr(0, 3);
@@ -60,9 +36,7 @@ config.command = {
 };
 
 config.post = {
-  get url() {
-    return config.remote + 'flashgot';
-  },
+  url: 'http://127.0.0.1:9666/flashgot',
   method: 'POST',
   action: (d, tab) => (d.referrer ? tools.cookies(d.referrer) : Promise.resolve('')).then(cookies => {
     let index = 0;
@@ -74,7 +48,7 @@ config.post = {
       data: {
         urls: d.finalUrl || d.url,
         referer: d.referrer || '',
-        autostart: config.autostart,
+        autostart: 1,
         package: tab.title || '',
         description: 'Initiated by ' + config.name,
         cookies,
