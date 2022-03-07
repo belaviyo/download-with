@@ -109,3 +109,7 @@ document.getElementById('reset').addEventListener('click', e => {
 document.getElementById('support').addEventListener('click', () => chrome.tabs.create({
   url: chrome.runtime.getManifest().homepage_url + '&rd=donate'
 }));
+// test
+document.getElementById('test').addEventListener('click', () => chrome.tabs.create({
+  url: 'https://webbrowsertools.com/test-download-with/'
+}));

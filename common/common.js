@@ -282,6 +282,11 @@ const buildContexts = () => chrome.storage.local.get({
         documentUrlPatterns: ['*://*/*']
       });
     }
+    chrome.contextMenus.create({
+      id: 'test',
+      title: 'Open Test Page',
+      contexts: ['page', 'browser_action']
+    });
   });
 });
 chrome.runtime.onInstalled.addListener(buildContexts);
@@ -312,7 +317,12 @@ const grab = mode => chrome.tabs.executeScript({
 });
 
 chrome.contextMenus.onClicked.addListener((info, tab) => {
-  if (info.menuItemId === 'grab') {
+  if (info.menuItemId === 'test') {
+    chrome.tabs.create({
+      url: 'https://webbrowsertools.com/test-download-with/'
+    });
+  }
+  else if (info.menuItemId === 'grab') {
     chrome.permissions.request({
       origins: ['*://*/*']
     }, granted => {
